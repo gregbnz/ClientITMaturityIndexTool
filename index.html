@@ -817,7 +817,7 @@ function showResults() {
     '</div>' +
     '<div class="breakdown"><h3>Priority focus order</h3>' +
       '<p style="font-size:12px;color:var(--text3);margin-bottom:1rem;line-height:1.5;max-width:560px">Click any row to expand the top 5 recommendations to advance to the next IML level.</p>' +
-      '<div style="overflow-x:auto"><table class="trait-tbl"><thead><tr><th style="width:56px">Q#</th><th>Question</th><th>Area</th><th style="text-align:right">IML</th><th style="text-align:right">Weighting</th></tr></thead>' +
+      '<div style="overflow-x:auto"><table class="trait-tbl"><thead><tr><th style="width:56px">Q#</th><th>Question</th><th>Area</th><th style="text-align:right">IML</th><th style="text-align:right">Weight</th></tr></thead>' +
       '<tbody>'+priorityRows+'</tbody></table></div>' +
     '</div>' +
     '<div class="res-actions">' +
@@ -956,7 +956,7 @@ window.addEventListener('afterprint', function() {
 var SAMPLE_ANSWERS = [3, 2, 3, 1, 2, 2, 3, 2, 4, 2, 3, 4, 1, 3, 2, 2, 1, 3, 3, 4, 2, 3, 1, 2, 4, 3, 4, 2, 3, 1, 1, 2, 4, 2, 3, 4, 3, 4, 2, 4, 2, 3, 2, 1, 2, 1, 3, 2, 1, 1, 2, 3, 1, 4, 2, 1];
 function fillSampleData() {
   customerName = 'Sample Org';
-  staffName    = 'Sample user';
+  staffName    = 'Sample User';
   document.getElementById('inp-customer').value = customerName;
   document.getElementById('inp-staff').value    = staffName;
   answers  = SAMPLE_ANSWERS.slice();
@@ -1078,10 +1078,14 @@ function buildRadar(areaStats) {
     if (lp[0] > cx + 8) anchor = 'start';
     else if (lp[0] < cx - 8) anchor = 'end';
     var label = SHORT[areaStats[i].area] || areaStats[i].area;
-    svg += '<text class="radar-label" x="'+lp[0].toFixed(1)+'" y="'+lp[1].toFixed(1)+'" text-anchor="'+anchor+'" dominant-baseline="middle">'+label+'</text>';
-    var sp = pt(a, R + 36);
+    var isHorizontal = anchor !== 'middle';
+    var isTop = !isHorizontal && lp[1] < cy;
+    var topShift = isTop ? 5 : 0;
+    var labelY = (isHorizontal ? lp[1] - 5 : lp[1]) - topShift;
+    var scoreY = (isHorizontal ? lp[1] + 4 : lp[1] + 11) - topShift;
+    svg += '<text class="radar-label" x="'+lp[0].toFixed(1)+'" y="'+labelY.toFixed(1)+'" text-anchor="'+anchor+'" dominant-baseline="'+(isHorizontal?'auto':'middle')+'">'+label+'</text>';
     var avg = (areaStats[i].score / (areaStats[i].max/5)).toFixed(1);
-    svg += '<text class="radar-score" x="'+sp[0].toFixed(1)+'" y="'+sp[1].toFixed(1)+'" text-anchor="'+anchor+'" dominant-baseline="middle">IML '+avg+'</text>';
+    svg += '<text class="radar-score" x="'+lp[0].toFixed(1)+'" y="'+scoreY.toFixed(1)+'" text-anchor="'+anchor+'" dominant-baseline="hanging">IML '+avg+'</text>';
   }
   // data shape
   var dataPts = [];
