@@ -2,13 +2,12 @@
 
 A self-contained, single-page web tool for assessing an organisation's IT maturity across **4 areas**, **13 traits**, and **56 weighted questions**, scored on a 1–5 IT Maturity Level (IML) scale (Nascent → Innovating).
 
-The app runs entirely in the browser — no server, no install. Just open `index.html`.
+The app runs entirely in the browser — no server, no install. Just browse to https://itmi.stallio.nz.
 
 ## What it does
 
 - Walks the user through 56 capability questions, grouped by area and trait.
-- Each question is rated on the IML 1–5 scale via a slider, with the matching descriptor revealed inline.
-- Optional commentary can be captured against every question.
+- Each question is rated on the IML 1–5 scale via a slider, with the matching descriptor revealed inline. Optional commentary can be captured against every question.
 - On completion, generates a results page with:
   - Overall score, percentage, and headline IML level
   - **Maturity by area** radar chart
@@ -18,11 +17,10 @@ The app runs entirely in the browser — no server, no install. Just open `index
 
 ## How to use
 
-1. Download or clone this repo.
-2. Open `index.html` in any modern browser (Chrome, Edge, Safari, Firefox).
-3. Enter the customer name and your name, then click **Begin assessment**.
-4. Move through each section, rating every question. Add commentary where useful.
-5. When all 56 questions are rated, click **View results** to see the scored report.
+1. Visit https://itmi.stallio.nz in any modern browser (Chrome, Edge, Safari, Firefox).
+2. Enter the customer name and your name, then click **Begin assessment**.
+3. Move through each section, rating every question. Add commentary where useful.
+4. When all 56 questions are rated, click **View results** to see the scored report.
 
 ## Sample data button
 
@@ -36,7 +34,7 @@ From the results page, click **Export to Excel** to download an `.xlsx` file con
 - IML rating, weighting, your commentary
 - The 5 recommendations to advance each question to its next IML level
 
-The file is named `<Customer> - Assessment - <Date>.xlsx` and uses [SheetJS](https://sheetjs.com/) (loaded from CDN) to generate the workbook client-side.
+The file is named `<Customer> - Assessment - <Date>.xlsx` and uses [SheetJS](https://sheetjs.com/) to generate the workbook client-side.
 
 ## Requirements
 
