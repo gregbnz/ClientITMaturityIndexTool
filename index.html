@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>IT Maturity Assessment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:     #ffffff;
+  --bg2:    #f5f4f1;
+  --bg3:    #eceae4;
+  --text:   #1a1a18;
+  --text2:  #6b6a65;
+  --text3:  #a09f9a;
+  --bdr:    rgba(26,26,24,0.12);
+  --bdr2:   rgba(26,26,24,0.22);
+  --accent: #1a1a18;
+  --r:      10px;
+  --rlg:    14px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:    #18181a; --bg2:   #222224; --bg3:   #2a2a2c;
+    --text:  #f0efe9; --text2: #9a9994; --text3: #6a6a66;
+    --bdr:   rgba(240,239,233,0.10); --bdr2: rgba(240,239,233,0.20);
+    --accent:#f0efe9;
+  }
+}
+
+html { font-size:16px; -webkit-font-smoothing:antialiased; }
+body { font-family:'DM Sans',system-ui,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+
+/* ── Persistent top bar (always visible) ── */
+#topbar {
+  position: sticky; top: 0; z-index: 200;
+  background: var(--bg);
+  border-bottom: 0.5px solid var(--bdr);
+  padding: 0.65rem 1.25rem;
+}
+.topbar-inner { max-width:900px; margin:0 auto; display:flex; align-items:center; gap:1rem; }
+.topbar-logo { font-size:13px; font-weight:500; color:var(--text); white-space:nowrap; }
+.topbar-meta { font-size:12px; color:var(--text3); flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; padding-left:12px; border-left:0.5px solid var(--bdr); margin-left:4px; }
+.prog-wrap { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+.prog-bar { width:140px; height:3px; background:var(--bdr); border-radius:99px; overflow:hidden; }
+.prog-fill { height:100%; background:var(--accent); border-radius:99px; transition:width 0.5s ease; width:0%; }
+.prog-pct { font-size:12px; color:var(--text3); min-width:32px; text-align:right; }
+
+/* ── Page ── */
+.page { max-width:900px; margin:0 auto; padding:0 1.25rem 5rem; }
+.screen { display:none; }
+.screen.active { display:block; }
+
+/* ── Buttons ── */
+.btn { display:inline-flex; align-items:center; gap:6px; height:42px; padding:0 20px; border:0.5px solid var(--bdr2); border-radius:var(--r); background:var(--bg); color:var(--text2); font-size:14px; font-family:inherit; cursor:pointer; transition:background 0.15s,color 0.15s; }
+.btn:hover { background:var(--bg2); color:var(--text); }
+.btn:active { transform:scale(0.98); }
+.btn:disabled { opacity:0.35; cursor:not-allowed; transform:none; }
+.btn-primary { background:var(--accent); color:var(--bg); border-color:var(--accent); font-weight:500; }
+.btn-primary:hover { opacity:0.85; background:var(--accent); color:var(--bg); }
+
+/* ── Intro ── */
+.hero { padding:3rem 0 2rem; }
+.hero h1 { font-size:clamp(30px,6vw,44px); font-weight:400; letter-spacing:-0.02em; line-height:1.15; margin-bottom:0.75rem; }
+.hero p { font-size:16px; color:var(--text2); max-width:460px; }
+
+.stats-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--bdr); border:0.5px solid var(--bdr); border-radius:var(--r); overflow:hidden; margin:2rem 0; }
+.stat { background:var(--bg2); padding:1rem 1.25rem; text-align:center; }
+.stat-num { font-size:24px; font-weight:400; }
+.stat-lbl { font-size:12px; color:var(--text3); margin-top:2px; }
+
+.field-pair { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.5rem; }
+@media (max-width:480px) { .field-pair { grid-template-columns:1fr; } }
+.field { display:flex; flex-direction:column; gap:6px; }
+.field label { font-size:13px; font-weight:500; color:var(--text2); }
+.field input { height:42px; padding:0 14px; border:0.5px solid var(--bdr2); border-radius:var(--r); background:var(--bg); color:var(--text); font-size:15px; font-family:inherit; outline:none; transition:border-color 0.15s,box-shadow 0.15s; }
+.field input:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(26,26,24,0.08); }
+@media (prefers-color-scheme:dark) { .field input:focus { box-shadow:0 0 0 3px rgba(240,239,233,0.08); } }
+
+/* ── Section header ── */
+.section-hd { padding:2rem 0 1.25rem; border-bottom:0.5px solid var(--bdr); margin-bottom:1.5rem; }
+.section-badge { display:inline-block; font-size:11px; font-weight:500; letter-spacing:0.06em; text-transform:uppercase; color:var(--text3); background:var(--bg2); border:0.5px solid var(--bdr); border-radius:99px; padding:3px 10px; margin-bottom:8px; }
+.section-hd h2 { font-size:22px; font-weight:400; letter-spacing:-0.01em; margin-bottom:4px; }
+.section-hd p { font-size:13px; color:var(--text3); }
+
+/* ── Trait group ── */
+.trait-group { margin-bottom:2rem; }
+.trait-hd { font-size:15px; font-weight:500; text-transform:none; letter-spacing:-0.005em; color:var(--text); padding:0.9rem 0 0.75rem; border-bottom:0.5px solid var(--bdr); margin-bottom:1rem; line-height:1.4; position:relative; padding-left:14px; }
+.trait-hd::before { content:''; position:absolute; left:0; top:1.05rem; bottom:0.85rem; width:3px; background:var(--accent); border-radius:99px; }
+.q-trait-label { display:block; font-size:11px; font-weight:500; color:var(--text2); margin-bottom:6px; line-height:1.35; }
+.section-summary { font-size:14px; line-height:1.55; color:var(--text2); max-width:640px; margin-bottom:6px; }
+.section-meta { font-size:12px; color:var(--text3); }
+
+/* ── Question card: two-column layout ── */
+.q-card { border:0.5px solid var(--bdr); border-radius:var(--rlg); padding:1.1rem 1.4rem 1.2rem; margin-bottom:0.75rem; background:var(--bg); transition:border-color 0.2s; }
+.q-card.touched { border-color:var(--bdr2); }
+
+/* top row: question text + IML badge */
+.q-top { display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; margin-bottom:1rem; }
+.q-left { flex:1; min-width:0; }
+.q-num { font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:0.05em; color:var(--text3); }
+.q-num-row { display:flex; align-items:center; gap:8px; margin-bottom:4px; }
+.q-weight { display:inline-flex; align-items:center; gap:4px; padding:2px 9px; background:var(--bg2); border:0.5px solid var(--bdr); border-radius:99px; font-size:10px; font-weight:500; color:var(--text2); letter-spacing:0.04em; text-transform:none; }
+.q-weight strong { font-weight:500; color:var(--text); font-variant-numeric:tabular-nums; }
+.q-foundational { display:inline-flex; align-items:center; padding:2px 9px; background:var(--text); color:var(--bg); border-radius:99px; font-size:10px; font-weight:500; letter-spacing:0.04em; text-transform:none; }
+@media (prefers-color-scheme:dark) { .q-foundational { background:var(--accent); color:var(--bg); } }
+.pq-weight { display:inline-block; padding:2px 8px; background:#f5f4f1; border-radius:99px; font-size:9px; color:#6b6a65; letter-spacing:0.04em; margin-left:8px; }
+.pq-weight strong { color:#1a1a18; font-weight:500; }
+.pq-foundational { display:inline-block; padding:2px 8px; background:#1a1a18; color:#ffffff; border-radius:99px; font-size:9px; font-weight:500; letter-spacing:0.04em; margin-left:6px; }
+
+/* Expandable priority rows */
+.priority-row { cursor:pointer; }
+.priority-row:hover td { background:var(--bg2); }
+.priority-row td { transition:background 0.15s; }
+.priority-detail-row td { padding:0 !important; border-bottom:0.5px solid var(--bdr); }
+.priority-detail { padding:1.1rem 1.25rem; background:var(--bg2); border-left:3px solid var(--accent); }
+.priority-detail h4 { font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:0.06em; color:var(--text3); margin-bottom:6px; margin-top:14px; }
+.priority-detail h4:first-child { margin-top:0; }
+.priority-detail .pd-state { font-size:13px; line-height:1.5; color:var(--text2); padding:9px 13px; background:var(--bg); border-radius:8px; border:0.5px solid var(--bdr); }
+.priority-detail ol { padding-left:1.4rem; margin-top:4px; }
+.priority-detail li { font-size:13px; line-height:1.6; color:var(--text); margin-bottom:4px; }
+.priority-caret { display:inline-block; width:10px; color:var(--text3); transition:transform 0.15s; transform-origin:50% 50%; }
+.priority-row.open .priority-caret { transform:rotate(90deg); }
+
+/* Scatter plot */
+.scatter-wrap { background:var(--bg2); border-radius:var(--rlg); padding:1.25rem; margin-bottom:1rem; border:0.5px solid var(--bdr); }
+.scatter-svg { width:100%; height:auto; display:block; max-width:680px; margin:0 auto; }
+.scatter-axis-line { stroke:var(--bdr2); stroke-width:0.6; }
+.scatter-grid-line { stroke:var(--bdr); stroke-width:0.5; stroke-dasharray:2,3; }
+.scatter-axis-label { font-size:10px; fill:var(--text3); font-family:'DM Sans',sans-serif; }
+.scatter-axis-title { font-size:11px; fill:var(--text2); font-family:'DM Sans',sans-serif; font-weight:500; }
+.scatter-pt { fill:var(--bg); stroke:var(--text); stroke-width:1; }
+.scatter-pt.foundational { fill:var(--text); stroke:var(--text); }
+.scatter-label { font-size:9px; fill:var(--text); font-family:'DM Sans',sans-serif; font-weight:500; pointer-events:none; }
+.scatter-label.foundational { fill:var(--bg); }
+.scatter-quadrant-label { font-size:10px; fill:var(--text3); font-family:'DM Sans',sans-serif; font-style:italic; }
+.scatter-legend { display:flex; gap:18px; justify-content:center; font-size:11px; color:var(--text3); margin-top:10px; flex-wrap:wrap; }
+.scatter-legend-item { display:inline-flex; align-items:center; gap:6px; }
+.scatter-legend-dot { display:inline-block; width:10px; height:10px; border-radius:50%; border:1px solid var(--text); background:var(--bg); }
+.scatter-legend-dot.solid { background:var(--text); }
+
+.q-text { font-size:15px; line-height:1.5; }
+.iml-live { flex-shrink:0; text-align:right; }
+.iml-score { display:block; font-size:26px; font-weight:300; line-height:1; }
+.iml-word { display:block; font-size:11px; color:var(--text3); margin-top:2px; white-space:nowrap; }
+
+/* slider */
+input[type="range"] { width:100%; -webkit-appearance:none; appearance:none; height:4px; border-radius:99px; background:var(--bdr); outline:none; cursor:pointer; margin-bottom:6px; display:block; }
+input[type="range"]::-webkit-slider-thumb { -webkit-appearance:none; width:22px; height:22px; border-radius:50%; background:var(--accent); border:3px solid var(--bg); box-shadow:0 0 0 1px var(--bdr2); cursor:pointer; transition:transform 0.1s; }
+input[type="range"]::-webkit-slider-thumb:hover { transform:scale(1.15); }
+input[type="range"]::-moz-range-thumb { width:22px; height:22px; border-radius:50%; background:var(--accent); border:3px solid var(--bg); cursor:pointer; }
+.slider-ends { display:flex; justify-content:space-between; font-size:11px; color:var(--text3); margin-bottom:10px; }
+
+/* bottom row: answer box + commentary side by side */
+.q-bottom { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+@media (max-width:600px) { .q-bottom { grid-template-columns:1fr; } }
+
+.ans-box { background:var(--bg2); border-radius:var(--r); padding:9px 13px; min-height:60px; }
+.ans-label { font-size:10px; font-weight:500; text-transform:uppercase; letter-spacing:0.06em; color:var(--text3); margin-bottom:3px; }
+.ans-text { font-size:13px; color:var(--text2); line-height:1.5; transition:color 0.15s; }
+.ans-text.lit { color:var(--text); }
+
+.comment-box { display:flex; flex-direction:column; gap:4px; }
+.comment-label { font-size:10px; font-weight:500; text-transform:uppercase; letter-spacing:0.06em; color:var(--text3); }
+.comment-input {
+  flex:1; min-height:60px; padding:8px 10px;
+  border:0.5px solid var(--bdr2); border-radius:var(--r);
+  background:var(--bg); color:var(--text);
+  font-size:13px; font-family:inherit; line-height:1.5;
+  resize:vertical; outline:none;
+  transition:border-color 0.15s, box-shadow 0.15s;
+}
+.comment-input:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(26,26,24,0.08); }
+@media (prefers-color-scheme:dark) { .comment-input:focus { box-shadow:0 0 0 3px rgba(240,239,233,0.08); } }
+.comment-input::placeholder { color:var(--text3); }
+
+/* ── Nav ── */
+.nav-row { display:flex; align-items:center; justify-content:space-between; padding-top:1.5rem; margin-top:0.5rem; border-top:0.5px solid var(--bdr); }
+.q-card.untouched .iml-score { color:var(--text3); font-weight:300; }
+.q-card.untouched .iml-word  { color:var(--text3); font-style:italic; }
+.q-card.untouched input[type="range"]::-webkit-slider-thumb { background:var(--bg); box-shadow:0 0 0 1.5px var(--bdr2) inset, 0 0 0 1px var(--bdr2); }
+.q-card.untouched input[type="range"]::-moz-range-thumb { background:var(--bg); border-color:var(--bdr2); }
+.q-card.untouched .ans-text { font-style:italic; color:var(--text3); }
+.prog-pct { font-variant-numeric:tabular-nums; }
+
+.area-tabs { display:flex; gap:4px; margin:1.5rem 0 0; padding:4px; background:var(--bg2); border:0.5px solid var(--bdr); border-radius:var(--r); overflow-x:auto; }
+.area-tab { flex:1; min-width:0; padding:9px 14px; background:transparent; border:0; border-radius:calc(var(--r) - 3px); font-family:inherit; font-size:13px; color:var(--text2); cursor:pointer; white-space:nowrap; transition:background 0.15s, color 0.15s; text-align:center; font-weight:500; }
+.area-tab:hover { color:var(--text); }
+.area-tab.active { background:var(--bg); color:var(--text); box-shadow:0 1px 2px rgba(0,0,0,0.04); }
+@media (prefers-color-scheme:dark) { .area-tab.active { box-shadow:0 1px 2px rgba(0,0,0,0.3); } }
+.area-tab-num { display:inline-block; font-size:10px; color:var(--text3); margin-right:6px; font-variant-numeric:tabular-nums; }
+.area-tab.active .area-tab-num { color:var(--text2); }
+@media (max-width:560px) { .area-tab { font-size:12px; padding:8px 10px; } .area-tab-num { display:none; } }
+
+.nav-info { font-size:13px; color:var(--text3); }
+
+/* ── Results ── */
+.res-hd { padding:2.5rem 0 2rem; border-bottom:0.5px solid var(--bdr); margin-bottom:2rem; }
+.eyebrow { font-size:11px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; color:var(--text3); margin-bottom:1rem; }
+.res-hd h1 { font-size:clamp(26px,5vw,38px); font-weight:400; letter-spacing:-0.02em; margin-bottom:4px; }
+.res-hd p { font-size:14px; color:var(--text3); }
+.meta-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:1.5rem; }
+@media (max-width:400px) { .meta-grid { grid-template-columns:1fr; } }
+.meta-card { background:var(--bg2); border-radius:var(--r); padding:0.875rem 1rem; }
+.meta-card .lbl { font-size:11px; color:var(--text3); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:3px; }
+.meta-card .val { font-size:15px; font-weight:500; }
+.score-display { text-align:center; padding:2.5rem 1rem; border:0.5px solid var(--bdr); border-radius:var(--rlg); background:var(--bg2); margin-bottom:1.5rem; }
+.score-lbl { font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--text3); margin-bottom:10px; }
+.score-big { font-size:clamp(54px,14vw,84px); font-weight:300; letter-spacing:-0.03em; line-height:1; }
+.score-denom { font-size:22px; color:var(--text3); }
+.score-pct { font-size:18px; color:var(--text2); margin-top:6px; }
+.iml-chip { display:inline-block; margin-top:14px; padding:6px 20px; border:0.5px solid var(--bdr2); border-radius:99px; font-size:13px; color:var(--text2); }
+.breakdown { margin-bottom:2rem; }
+.breakdown h3 { font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:0.08em; color:var(--text3); margin-bottom:1rem; }
+.area-row { margin-bottom:14px; }
+.area-row-top { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:5px; }
+.area-name { font-size:14px; }
+.area-sc { font-size:13px; color:var(--text3); }
+.bar-bg { height:5px; background:var(--bdr); border-radius:99px; overflow:hidden; }
+.bar-fill { height:100%; background:var(--accent); border-radius:99px; width:0%; transition:width 0.8s cubic-bezier(0.16,1,0.3,1); }
+.trait-tbl { width:100%; border-collapse:collapse; font-size:13px; }
+.trait-tbl th { text-align:left; font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:0.06em; color:var(--text3); padding:0 0 8px; border-bottom:0.5px solid var(--bdr); }
+.trait-tbl th:last-child { text-align:right; }
+.trait-tbl td { padding:8px 0; border-bottom:0.5px solid var(--bdr); color:var(--text2); vertical-align:middle; }
+.trait-tbl td:first-child { color:var(--text); }
+.trait-tbl td:last-child { text-align:right; font-variant-numeric:tabular-nums; }
+.trait-tbl tr:last-child td { border-bottom:none; }
+.res-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:2rem; padding-top:1.5rem; border-top:0.5px solid var(--bdr); }
+
+/* ── Print styles ── */
+@media print {
+  #topbar { display:none !important; }
+  .screen { display:none !important; }
+  #print-summary.active, #print-questions.active { display:block !important; }
+}
+
+/* ── Print-only pages ── */
+#print-summary, #print-questions { display:none; }
+
+.print-page { font-family:'DM Sans',system-ui,sans-serif; color:#1a1a18; max-width:800px; margin:0 auto; padding:2rem; }
+.print-page h1 { font-size:28px; font-weight:400; letter-spacing:-0.02em; margin-bottom:4px; }
+.print-page .sub { font-size:13px; color:#6b6a65; margin-bottom:2rem; padding-bottom:1.5rem; border-bottom:0.5px solid rgba(26,26,24,0.15); }
+.print-meta-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:1.5rem; }
+.print-meta-item .pm-lbl { font-size:10px; text-transform:uppercase; letter-spacing:0.06em; color:#a09f9a; margin-bottom:2px; }
+.print-meta-item .pm-val { font-size:14px; font-weight:500; }
+.print-score-block { background:#f5f4f1; border-radius:10px; padding:1.5rem; text-align:center; margin-bottom:1.5rem; }
+.print-score-block .ps-lbl { font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:#a09f9a; margin-bottom:8px; }
+.print-score-block .ps-num { font-size:60px; font-weight:300; letter-spacing:-0.03em; line-height:1; }
+.print-score-block .ps-pct { font-size:16px; color:#6b6a65; margin-top:4px; }
+.print-score-block .ps-iml { font-size:13px; color:#6b6a65; margin-top:10px; }
+.print-area-section { margin-bottom:1.5rem; }
+.print-area-section h3 { font-size:10px; font-weight:500; text-transform:uppercase; letter-spacing:0.08em; color:#a09f9a; margin-bottom:10px; }
+.print-area-row { display:flex; justify-content:space-between; align-items:center; font-size:14px; padding:6px 0; border-bottom:0.5px solid rgba(26,26,24,0.1); }
+.print-area-row:last-child { border-bottom:none; }
+.print-area-row span:last-child { color:#6b6a65; font-size:13px; }
+.print-trait-tbl { width:100%; border-collapse:collapse; font-size:13px; margin-top:8px; }
+.print-trait-tbl th { text-align:left; font-size:10px; text-transform:uppercase; letter-spacing:0.06em; color:#a09f9a; padding:0 0 6px; border-bottom:0.5px solid rgba(26,26,24,0.12); }
+.print-trait-tbl th:last-child { text-align:right; }
+.print-trait-tbl td { padding:6px 0; border-bottom:0.5px solid rgba(26,26,24,0.08); color:#6b6a65; }
+.print-trait-tbl td:first-child { color:#1a1a18; }
+.print-trait-tbl td:last-child { text-align:right; }
+.print-trait-tbl tr:last-child td { border-bottom:none; }
+
+/* Questions PDF layout */
+.pq-area { margin-bottom:2rem; page-break-before:auto; }
+.pq-area-title { font-size:18px; font-weight:400; margin-bottom:4px; }
+.pq-area-sub { font-size:12px; color:#a09f9a; margin-bottom:1rem; padding-bottom:0.75rem; border-bottom:0.5px solid rgba(26,26,24,0.15); }
+.pq-trait { margin-bottom:1.5rem; }
+.pq-trait-title { font-size:10px; font-weight:500; text-transform:uppercase; letter-spacing:0.08em; color:#a09f9a; margin-bottom:0.75rem; }
+.pq-q { border:0.5px solid rgba(26,26,24,0.12); border-radius:10px; padding:0.9rem 1.1rem; margin-bottom:0.75rem; page-break-inside:avoid; }
+.pq-q-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.75rem; gap:1rem; }
+.pq-q-text { font-size:14px; line-height:1.5; flex:1; }
+.pq-iml { text-align:right; flex-shrink:0; }
+.pq-iml-num { font-size:22px; font-weight:300; line-height:1; }
+.pq-iml-lbl { font-size:10px; color:#a09f9a; white-space:nowrap; }
+.pq-answer { background:#f5f4f1; border-radius:6px; padding:7px 10px; font-size:12px; color:#6b6a65; margin-bottom:6px; }
+.pq-comment { border-top:0.5px solid rgba(26,26,24,0.1); margin-top:8px; padding-top:8px; font-size:12px; color:#6b6a65; font-style:italic; }
+.pq-comment-lbl { font-size:10px; text-transform:uppercase; letter-spacing:0.06em; color:#a09f9a; margin-bottom:3px; font-style:normal; }
+</style>
+</head>
+<body>
+
+<!-- ═══ PERSISTENT TOP BAR ═══ -->
+<div id="topbar">
+  <div class="topbar-inner">
+    <span class="topbar-logo">IT Maturity Assessment</span>
+    <span class="topbar-meta" id="topbar-meta"></span>
+    <div class="prog-wrap">
+      <div class="prog-bar"><div class="prog-fill" id="prog-fill"></div></div>
+      <span class="prog-pct" id="prog-pct">0%</span>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- ═══ INTRO ═══ -->
+  <div id="screen-intro" class="screen active">
+    <div class="hero">
+      <h1>IT Maturity<br>Assessment</h1>
+      <p>Complete all sections to generate a scored capability report across all areas and traits.</p>
+    </div>
+    <div class="stats-grid">
+      <div class="stat"><div class="stat-num">56</div><div class="stat-lbl">Questions</div></div>
+      <div class="stat"><div class="stat-num">4</div><div class="stat-lbl">Areas</div></div>
+      <div class="stat"><div class="stat-num">IML 1–5</div><div class="stat-lbl">Scale</div></div>
+    </div>
+    <div class="field-pair">
+      <div class="field">
+        <label for="inp-customer">Customer name</label>
+        <input type="text" id="inp-customer" placeholder="Enter customer name" autocomplete="off" />
+      </div>
+      <div class="field">
+        <label for="inp-staff">Assessed by</label>
+        <input type="text" id="inp-staff" placeholder="Your name" autocomplete="off" />
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <button class="btn btn-primary" onclick="startAssessment()">Begin assessment &rarr;</button>
+      <button class="btn" onclick="fillSampleData()">Fill with sample data</button>
+    </div>
+    <p style="margin-top:1rem;font-size:13px;color:var(--text3)">Approx. 20–30 minutes</p>
+  </div>
+
+  <!-- ═══ QUESTIONS ═══ -->
+  <div id="screen-questions" class="screen">
+    <div id="area-tabs" class="area-tabs"></div>
+    <div id="section-hd" class="section-hd"></div>
+    <div id="q-container"></div>
+    <div class="nav-row">
+      <button class="btn" id="btn-back" onclick="prevGroup()" disabled>&#8592; Back</button>
+      <span class="nav-info" id="nav-info"></span>
+      <button class="btn btn-primary" id="btn-next" onclick="nextGroup()">Next &rarr;</button>
+    </div>
+  </div>
+
+  <!-- ═══ RESULTS ═══ -->
+  <div id="screen-results" class="screen">
+    <div id="results-content"></div>
+  </div>
+
+</div><!-- /page -->
+
+<!-- ═══ PRINT: SUMMARY PDF (hidden, shown only when printing summary) ═══ -->
+<div id="print-summary">
+  <div class="print-page" id="print-summary-content"></div>
+</div>
+
+<!-- ═══ PRINT: QUESTIONS PDF (hidden, shown only when printing questions) ═══ -->
+<div id="print-questions">
+  <div class="print-page" id="print-questions-content"></div>
+</div>
+
+<script>
+var IML_LABELS = ['Nascent','Learning','Proficient','Skilled','Innovating'];
+var AREA_SUMMARIES = {"Strategy, Governance and Investment": "How tightly IT strategy is aligned to business outcomes, the strength of governance and decision-making structures, the discipline applied to IT investment, and the construction of the IT organisation itself — covering whether IT operates as a reactive cost centre or a strategic partner driving measurable value.", "Operations, Platform and Service Delivery": "The maturity of underlying infrastructure and operations — architecture, cloud platforms, observability, automated maintenance, and recovery — alongside the quality and responsiveness of end-user support and the working relationship between infrastructure and application teams.", "Security & Business Resilience": "Readiness to keep operating through outages, breaches and other disruptions, plus the strength of cyber controls including risk identification, identity and access, vulnerability management, threat detection, incident response and security awareness across the workforce.", "Digital Enablement and Future Capability": "Maturity of the modern digital workplace, process automation, AI strategy and adoption, and enterprise information management — examining whether technology genuinely empowers the workforce, delivers measurable productivity gains, and positions the business to compete on data and AI."};
+
+
+var RECS = [
+  ["Map every active IT initiative to a specific business outcome or KPI","Establish a recurring forum where IT and business leaders co-prioritise work","Build a single dashboard showing IT investment vs business value delivered","Train IT leaders to translate technical work into business language","Embed business outcome owners as accountable stakeholders on every IT project"],
+  ["Run interviews with each business unit to capture their top three priorities","Map roadmap items to specific business outcomes with measurable success criteria","Establish quarterly roadmap reviews driven by business performance data","Create a feedback channel where business leaders can challenge or reprioritise items","Tie technical milestones to business KPIs in your governance reporting"],
+  ["Designate a single accountable owner for the IT roadmap with executive backing","Form a steering committee with representation from each business unit","Document a RACI for roadmap development, prioritisation, and execution","Schedule regular ownership reviews to ensure the roadmap stays current","Tie roadmap ownership to executive scorecards or compensation"],
+  ["Build a real-time dashboard showing roadmap milestones and status","Establish a monthly cadence of reporting to executive sponsors","Standardise status indicators (on-track / at-risk / delayed) for each initiative","Include business value realised, not just project completion percentage","Make the dashboard self-service so stakeholders can drill in anytime"],
+  ["Build a multi-year IT funding model with clear capex/opex allocation","Tie funding requests to business cases with quantified ROI","Reserve 10–15% capacity for unplanned strategic opportunities","Implement portfolio governance to reallocate funds dynamically","Track actual vs forecast spend with monthly variance review"],
+  ["Ensure the IT lead has a permanent seat at executive strategy meetings","Pre-brief IT leadership on upcoming business strategy discussions","Train IT leaders to contribute strategic options, not just technical answers","Embed IT representatives in business unit planning sessions","Track strategic decisions where IT input materially shaped the outcome"],
+  ["Establish a formal IT steering committee with cross-functional members","Define decision rights for investment, architecture, security, and risk","Document governance cadence (monthly/quarterly) with clear agendas","Publish governance decisions so the broader organisation can see them","Review governance effectiveness annually and adjust composition"],
+  ["Build a standardised scoring model (cost, risk, business value, strategic fit)","Require business cases for all investments above a defined threshold","Establish a dedicated investment board to evaluate against the model","Run quarterly portfolio reviews to reallocate funds based on actuals","Track post-implementation ROI to validate prioritisation decisions"],
+  ["Maintain a comprehensive risk register reviewed quarterly","Integrate IT risk into the enterprise risk management framework","Assign business mitigation owners for each identified risk","Use scenario testing to validate risk treatment effectiveness","Report top risks and trends to the executive team and board"],
+  ["Synchronise IT planning cycles with the business planning calendar","Embed IT leaders in business unit planning workshops","Run joint priority-setting sessions before annual planning","Establish cross-functional planning teams for major initiatives","Track alignment metrics (e.g., % of IT spend tied to business priorities)"],
+  ["Define a multi-year balance between capex (transformation) and opex (run)","Use cloud cost modelling to avoid capex/opex misalignment","Plan lifecycle replacement spending to avoid bow-wave debt","Reserve a portion (e.g., 10%) for innovation pilots","Track total cost of ownership across the asset lifecycle"],
+  ["Implement FinOps practices for cloud and licensing visibility","Allocate IT costs to business units to drive accountability","Run monthly variance reviews with executive sponsorship","Right-size resources continuously based on consumption data","Set cost optimisation targets and track progress quarterly"],
+  ["Build a value realisation dashboard for major IT investments","Define value KPIs (revenue impact, productivity, risk reduction) per initiative","Run post-implementation reviews 6–12 months after delivery","Tie IT spend visibility to business outcomes, not just budget vs actual","Communicate value delivered to executive leadership quarterly"],
+  ["Maintain a continuously refreshed pipeline of IT opportunities","Score opportunities on cost, risk, value, and strategic fit","Re-evaluate priorities quarterly based on latest data and market signals","Run portfolio rebalancing exercises annually with executive input","Track decisions to validate the prioritisation framework over time"],
+  ["Identify your top five strategic vendors based on business impact","Establish quarterly business reviews with each strategic vendor","Co-develop multi-year roadmaps with key partners","Negotiate outcome-based commercials, not just discounts","Embed key vendors in your innovation and strategy discussions"],
+  ["Move from technology silos to product/service-oriented teams","Define functional teams aligned to business outcomes","Establish clear roles, responsibilities, and escalation paths","Build cross-functional capabilities (DevOps, security, data)","Review the structure annually as the technology landscape evolves"],
+  ["Position the IT leader at executive level with direct CEO access","Avoid burying IT under finance or operations as a back-office function","Ensure IT participation in board strategy reviews","Establish IT as a peer to business unit leaders","Communicate IT's strategic role internally and to customers"],
+  ["Define KPIs tied to delivery, quality, and innovation outcomes","Include business outcome metrics in evaluations (not just uptime)","Tie compensation to project success and value realisation","Invest in continuous learning and certification budgets","Benchmark compensation against market for technology roles"],
+  ["Document an enterprise architecture covering all infrastructure domains","Establish an architecture review board for significant decisions","Update architecture annually and after major technology shifts","Use architecture standards to enforce consistency across deployments","Make architecture diagrams accessible and self-documenting via code"],
+  ["Define a cloud-first policy for all new workloads","Adopt Infrastructure as Code (IaC) as the standard deployment model","Migrate legacy workloads using a structured cloud assessment","Use managed PaaS services where they replace self-managed infrastructure","Build CI/CD pipelines to automate infrastructure provisioning and updates"],
+  ["Implement centralised observability across all critical systems","Set up real-time alerting with severity-based escalation","Build runbooks for common alert scenarios with automation","Adopt AIOps to detect anomalies before they cause user impact","Run quarterly reviews of monitoring coverage and alert quality"],
+  ["Define policy-as-code for patching and configuration standards","Automate OS, middleware, and application patching pipelines","Build CI/CD pipelines for infrastructure changes","Enforce non-compliant resource detection with auto-remediation","Track patch coverage and time-to-patch metrics"],
+  ["Adopt immutable infrastructure — rebuild from code, not patch in place","Automate disaster recovery orchestration with regular testing","Define recovery time objectives (RTO) per system tier","Use multi-region replication for tier-1 systems","Run chaos engineering exercises to validate recovery"],
+  ["Build role-specific training paths for key technologies","Use champions in each business unit to drive adoption","Track training completion AND skill outcomes (not just attendance)","Provide just-in-time learning embedded in workflows","Run periodic refreshers for evolving tools (e.g., AI / Copilot)"],
+  ["Build a standardised service catalog for common requests","Implement self-service portals for hardware and software requests","Define SLAs by request type with public visibility","Use predictive analytics to identify and resolve issues proactively","Automate provisioning to reduce manual handling time"],
+  ["Establish a dedicated application support team for critical apps","Document troubleshooting guides for top issues per application","Implement self-service software centres for standard apps","Use AI assistants to deflect common questions","Run regular reviews of application support metrics"],
+  ["Deploy modern endpoint management (e.g., Intune)","Implement a zero-trust support model with identity verification","Use secure remote access tools — not legacy VPN","Automate device health checks and remediation","Train support staff on remote-first troubleshooting"],
+  ["Define and publish SLAs for response and resolution","Standardise support tier processes and escalation paths","Track first-call resolution rate as a key KPI","Implement queue prioritisation based on business impact","Use AI triage to route and resolve common issues instantly"],
+  ["Identify all business-critical applications and define their SLAs","Implement proactive monitoring and automated scaling","Establish change windows to minimise disruption","Adopt zero-downtime deployment practices for critical apps","Run regular DR testing for all tier-1 applications"],
+  ["Document a clear RACI for infrastructure and application changes","Establish joint planning ceremonies for releases","Use shared toolchains (CI/CD, monitoring, ticketing)","Move toward product teams that own the full application stack","Measure and improve handoff times and friction points"],
+  ["Build and document a comprehensive BCP for all critical functions","Identify manual workarounds for major system failures","Run tabletop simulations annually with all stakeholders","Train staff on BCP procedures and their roles","Update the BCP after every major incident or organisational change"],
+  ["Define RTO/RPO targets per system tier with business alignment","Validate technical capability to meet the targets via testing","Run quarterly recovery tests to confirm targets are achievable","Update objectives as systems and dependencies change","Report achievement to executive sponsors"],
+  ["Implement immutable, air-gapped backups protected from ransomware","Run automated daily backups to off-site/cloud locations","Test backup restoration monthly via sample recovery","Track backup success rates and remediate failures fast","Document and rehearse end-to-end recovery procedures"],
+  ["Document HA/DR plans with clear ownership","Configure automated failover for tier-1 systems","Run annual full DR exercises to validate plans","Use chaos engineering to test resilience continuously","Refine plans based on test results and real incidents"],
+  ["Maintain a comprehensive asset inventory with discovery automation","Build a risk register linked to assets and business impact","Run quarterly risk assessments with security and business input","Use threat modelling for new systems and major changes","Drive risk-based investment in mitigation controls"],
+  ["Enforce MFA for all users and admin access","Implement single sign-on (SSO) across all critical applications","Apply Conditional Access policies for risk-based decisions","Use Just-In-Time admin elevation for privileged access","Move toward zero-trust with continuous verification"],
+  ["Establish a formal patch management policy with monthly windows","Use automated vulnerability scanning across all assets","Prioritise patches by exploitability and asset criticality","Automate patch deployment via CI/CD where possible","Track time-to-patch and remediation rates"],
+  ["Deploy SIEM/XDR for centralised monitoring","Establish 24/7 security operations (in-house or via partner)","Implement automated threat hunting and response playbooks","Use AIOps for anomaly detection at scale","Continuously assess posture against benchmarks (CIS, NIST)"],
+  ["Document an IR plan with clear roles and escalation paths","Establish 24/7 response capability (in-house or partner)","Run annual tabletop exercises with executives and IT","Build automated playbooks for common incident types","Track MTTR and continuously improve via retrospectives"],
+  ["Run regular phishing simulations with role-based difficulty","Establish security champions in each business unit","Make security part of onboarding and annual training","Communicate security incidents transparently as learning opportunities","Tie security KPIs to executive scorecards"],
+  ["Build digital literacy programs targeted by role","Use telemetry to identify users struggling with tools","Provide hands-on coaching, not just videos and docs","Tailor training paths for evolving tech (AI, automation)","Measure productivity outcomes, not just training completion"],
+  ["Deploy a Digital Employee Experience (DEX) platform","Capture sentiment via pulse surveys and feedback tools","Track digital friction (login times, app load, errors)","Build action plans for low-experience cohorts","Use AI to predict and resolve experience issues proactively"],
+  ["Run formal change management for all major rollouts","Identify adoption barriers via surveys and analytics","Use champions and peer-coaching to drive adoption","Tailor communications and training to specific user segments","Measure adoption metrics and adjust the plan accordingly"],
+  ["Establish IT as the lead for enterprise automation strategy","Build a citizen developer program with IT-governed platforms","Identify high-volume, high-cost manual processes for automation","Set up an automation Centre of Excellence","Measure automation ROI per initiative"],
+  ["Build an automation backlog with intake from across the business","Score opportunities by complexity, ROI, and business impact","Run an automation roadmap review quarterly","Establish a CoE to deliver and govern automation","Embed automation into business process improvement work"],
+  ["Define ROI metrics (time saved, cost reduced, errors avoided)","Capture baseline metrics before automation goes live","Measure realised value 3–6 months post-implementation","Build a portfolio dashboard showing total automation value","Use ROI data to justify continued investment"],
+  ["Document an AI strategy aligned to business goals","Establish AI governance covering ethics, privacy, and security","Define approved AI tools and disallowed practices","Build secure platforms for AI experimentation","Communicate the strategy clearly across the organisation"],
+  ["Deploy enterprise AI tools (Copilot, internal LLMs) broadly","Integrate AI into core business workflows, not just chat","Provide secure sandboxes for user experimentation","Train users to use AI productively and responsibly","Measure AI value delivered, not just license usage"],
+  ["Implement data classification and sensitivity labels","Apply least-privilege access controls before enabling AI indexing","Build a governed Power Platform for citizen development","Audit AI access patterns regularly","Use DLP and information protection to prevent oversharing"],
+  ["Define AI value metrics (time, cost, quality, revenue)","Capture baseline metrics before AI deployment","Run pilots with measurable success criteria","Build dashboards showing AI value across use cases","Tie AI investment decisions to realised value data"],
+  ["Build a centralised data warehouse or lakehouse","Migrate critical reporting to the central platform","Decommission shadow data sources where possible","Implement data quality controls and lineage","Make the platform self-service for business users"],
+  ["Run data classification across all repositories","Apply sensitivity labels with auto-detection","Implement role-based access controls per data category","Use DLP to prevent unauthorised data movement","Audit access patterns and remediate over-sharing"],
+  ["Build automated data pipelines from all source systems","Implement central monitoring with failure alerting","Use real-time streaming where business needs warrant it","Build self-healing pipelines with retry logic","Track data freshness and quality SLAs"],
+  ["Provide curated, certified datasets for self-service","Train users on Power BI or equivalent BI tools","Build a central data catalog for discoverability","Establish data stewardship in business units","Enable AI-assisted analytics for non-technical users"],
+  ["Define retention policies by data type and regulatory need","Automate retention enforcement — don't rely on manual deletion","Implement tiered storage for cost-effective archiving","Run periodic retention audits to verify compliance","Tie retention to records management governance"],
+  ["Define value metrics for major data initiatives","Build business cases with quantified data ROI","Track outcomes of data-driven decisions","Build a data value realisation dashboard","Communicate data value stories to executives"]
+];
+
+var QUESTIONS = [
+  {area:'Strategy, Governance and Investment',trait:'Documented and actively maintained IT / digital strategy aligned to the business’s strategy',q:'How does the organisation think about aligning IT initiatives to broader business outcomes?',a:['IT is a reactive cost center focusing solely on keeping the lights on.','Alignment is ad-hoc, with IT informed of business decisions only after they occur.','IT leaders participate in business planning to support identified strategic priorities.','Every major IT initiative is explicitly linked to a specific, measurable business KPI.','Technology and business strategies are indistinguishable, proactively driving new revenue streams and competitive differentiation.'],w:3.1,f:1},
+  {area:'Strategy, Governance and Investment',trait:'Documented and actively maintained IT / digital strategy aligned to the business’s strategy',q:'How tailored is the IT roadmap to the specific needs and priorities of the business?',a:['No formal roadmap exists; technology decisions are made in isolation.','The roadmap is generic, following industry trends with little regard for internal business drivers.','The roadmap identifies major business priorities and aligns investments to core operational requirements.','Technical milestones are explicitly mapped to specific business performance targets, timelines, and measurable success criteria','The roadmap is a dynamic strategic asset, continuously evolving to exploit technology for competitive differentiation.'],w:3.4},
+  {area:'Strategy, Governance and Investment',trait:'Documented and actively maintained IT / digital strategy aligned to the business’s strategy',q:'How is ownership for developing and maintaining the roadmap typically assigned?',a:['Ownership is undefined, resulting in fragmented and uncoordinated technology efforts.','Individual departments own their own roadmaps with minimal central IT oversight.','A central IT leader is responsible for the roadmap, seeking occasional input from business heads.','Clear governance structures, like steering committees, co-own the roadmap with defined business ownership.','Strategic ownership is shared at the executive level, with IT and business leaders equally accountable for delivery.'],w:2.8},
+  {area:'Strategy, Governance and Investment',trait:'Documented and actively maintained IT / digital strategy aligned to the business’s strategy',q:'How is progress against the roadmap shared with leadership or key stakeholders?',a:['Progress is rarely shared or only discussed when major failures occur.','Updates are provided ad-hoc through informal meetings or manual reports when requested.','Regular, scheduled reporting on major project milestones is provided to key business stakeholders.','Dashboards provide transparent, frequent updates on roadmap progress and its impact on business value.','Real-time, automated visibility into roadmap execution and ROI is accessible to all executive leadership.'],w:2.9},
+  {area:'Strategy, Governance and Investment',trait:'Documented and actively maintained IT / digital strategy aligned to the business’s strategy',q:'How is funding for roadmap initiatives generally planned and approved?',a:['Funding is ad-hoc and reactive, often requiring emergency approval for critical needs.','IT must compete for budget against other departments without a clear framework for prioritization.','An annual IT budget is set based on the roadmap and historical spending patterns.','A transparent, business-value-driven process prioritizes and funds initiatives based on clear ROI and TCO awareness.','Dynamic, agile funding models allow for rapid pivots to exploit emerging technology and innovation opportunities.'],w:3.3},
+  {area:'Strategy, Governance and Investment',trait:'Clear IT governance and decision‑making structures',q:'How is IT represented in strategic discussions today?',a:['IT is excluded from strategic discussions and is only consulted for troubleshooting or maintenance.','IT is occasionally invited to provide technical feedback, but only after strategy is already set.','IT leadership has a consistent seat at the management table to align tech with business goals.','IT is a proactive strategic partner co-designing business outcomes and driving executive-level decisions.','Technology leadership is indistinguishable from business leadership; defining the future of the company.'],w:3.2,f:1},
+  {area:'Strategy, Governance and Investment',trait:'Clear IT governance and decision‑making structures',q:'Are there clear IT governance structures (e.g., steering committees, defined ownership)?',a:['No formal governance structures exist; resulting in uncoordinated and overlapping technology efforts.','Governance is ad-hoc with roles and responsibilities defined only for specific major projects.','A formal IT steering committee meets regularly to provide centralized oversight and accountability.','Strategic committees co-own technology outcomes with defined business owners for every major system.','Governance is embedded and automated, with real-time transparency across all technology ownership and performance.'],w:3.1},
+  {area:'Strategy, Governance and Investment',trait:'Clear IT governance and decision‑making structures',q:'How are IT investment decisions usually prioritised and approved?',a:['Prioritization is based on immediate crises or the influence of individual department heads.','Investment requests are reviewed ad-hoc without a standardized framework for comparing value.','A standard scoring model prioritizes investments based on cost; risk; and general business benefit.','A multi-stakeholder board prioritizes investments using detailed business cases and projected ROI metrics.','Resource allocation is dynamic and data-driven; automatically shifting to the highest-value opportunities in real-time.'],w:2.9,f:1},
+  {area:'Strategy, Governance and Investment',trait:'Clear IT governance and decision‑making structures',q:'How are technology‑related risks identified and managed within the organisation?',a:['Risk management is non-existent or purely reactive after a significant security or operational failure.','Risks are identified informally but are not documented in a central register or tracked over time.','A formal technology risk register is maintained and reviewed quarterly by IT leadership.','IT risk is integrated into the enterprise risk management framework with clear business mitigation owners.','AI-driven analytics provide autonomous; real-time visibility into the organization’s total risk and compliance posture.'],w:3.5},
+  {area:'Strategy, Governance and Investment',trait:'Clear IT governance and decision‑making structures',q:'What is the level of alignment between IT and the broader business planning process?',a:['IT and business planning are entirely disconnected; often resulting in mismatched goals and timelines.','IT planning follows business planning with a significant delay; leading to reactive technology execution.','The IT roadmap is aligned to the annual business plan to support identified operational priorities.','Planning is a continuous and collaborative process where IT and business goals are co-developed.','Business planning is tech-led; where digital capabilities define the possible scope of business strategy.'],w:3.2},
+  {area:'Strategy, Governance and Investment',trait:'Effective IT investment approach',q:'How does the organisation typically approach IT funding across capital and operational expenditure?',a:['Funding is unplanned and reactive; occurring only when hardware breaks.','Budgets are managed in departmental silos with little coordination between CapEx and OpEx.','IT budgets are set annually with a clear distinction between maintenance and project spend.','A balanced multi-year funding model supports continuous lifecycle management and debt reduction.','Dynamic outcome-based funding allows IT to pivot resources rapidly to innovation opportunities.'],w:3.6},
+  {area:'Strategy, Governance and Investment',trait:'Effective IT investment approach',q:'From a financial perspective, how is IT spend reviewed and managed?',a:['Spend is tracked via basic invoices with no central oversight or review.','IT costs are reviewed monthly against a high-level budget focusing on minimizing expenses.','Formal monthly reviews track variance across infrastructure and licensing with cost-center allocation.','Advanced FinOps practices provide granular visibility into cloud and service costs with active optimization.','IT spend is managed as a value-driven investment portfolio with real-time transparency.'],w:3.3},
+  {area:'Strategy, Governance and Investment',trait:'Effective IT investment approach',q:'How do you assess visibility and confidence in IT spend relative to the value it delivers?',a:['There is zero visibility into the ROI or business value of technology spending.','Leadership views IT spend as a necessary burden rather than a contributor to business value.','Major project costs are tracked against basic delivery milestones to ensure project accountability.','Formal value-realization metrics track the direct impact of technology spend on operational efficiency.','High confidence exists as automated dashboards link IT consumption directly to business growth.'],w:3.2,f:1},
+  {area:'Strategy, Governance and Investment',trait:'Effective IT investment approach',q:'How are IT investment opportunities evaluated and prioritised over time?',a:['Investments are prioritized by the loudest voice or the most urgent technical failure.','Projects are selected based on executive requests without a standardized evaluation framework.','A scoring system evaluates project requests based on cost risk and broad business alignment.','A structured steering committee prioritizes investments using detailed business cases and ROI projections.','Continuous portfolio management prioritizes high-impact innovation based on real-time market needs.'],w:3.2,f:1},
+  {area:'Strategy, Governance and Investment',trait:'Effective IT investment approach',q:'How would you describe relationships with key technology vendors – more transactional, or more strategic?',a:['Relationships are purely transactional focusing only on the lowest purchase price during procurement.','Vendors are managed as basic service providers with interactions limited to renewals and support.','Key partners are identified and managed through regular account reviews and service monitoring.','Strategic partners are integrated into long-term roadmapping and co-design of future solutions.','Partnerships are deep and collaborative sharing risk and reward to drive joint innovation.'],w:3.1},
+  {area:'Strategy, Governance and Investment',trait:'Well constructed IT Organization',q:'How has the IT organization been constructed?',a:['IT roles are undefined with individuals performing jack-of-all-trades support tasks.','The team is structured around legacy technology silos with limited cross-functional collaboration.','A clear organizational chart defines functional teams with specific responsibilities.','The structure is modernized around service-delivery and product teams that align with business functions.','A highly agile organization utilizes global talent and automated platforms to scale with demand.'],w:3.2},
+  {area:'Strategy, Governance and Investment',trait:'Well constructed IT Organization',q:'Where does IT report and to whom?',a:['IT reports to a middle manager and is excluded from all executive-level discussions.','IT reports to Finance or Operations as a support function rather than a strategic partner.','IT leadership reports to the CEO and participates in regular management team meetings.','IT is a core member of the executive leadership team influencing every major business decision.','The technology leader is a peer to the business owners co-leading the strategic direction.'],w:2.8},
+  {area:'Strategy, Governance and Investment',trait:'Well constructed IT Organization',q:'How are key personnel compensated, and evaluated?',a:['Compensation is flat and evaluations are informal focusing only on basic task completion.','Performance is measured by basic uptime metrics with standard cost-of-living salary increases.','Personnel have formal KPIs linked to technical performance and professional development goals.','Compensation includes incentives tied to successful project delivery and measurable efficiency gains.','Evaluations are based on innovation and value-creation with incentives linked to company growth.'],w:3.2},
+  {area:'Operations, Platform and Service Delivery',trait:'Effective and efficient IT Operations & Infrastructure',q:'Is there a comprehensive, regularly updated architecture guiding all infrastructure decisions?',a:['No formal architecture exists; systems are built ad-hoc as needs arise.','A basic network diagram exists but does not guide future purchasing decisions.','A documented Enterprise Architecture guides standard infrastructure deployments and lifecycle replacements.','Advanced architecture frameworks drive continuous optimization and modernization of all platforms.','Architecture is dynamic and self-documenting automatically enforcing standards through policy-driven code.'],w:3.8},
+  {area:'Operations, Platform and Service Delivery',trait:'Effective and efficient IT Operations & Infrastructure',q:'Is the infrastructure based on cloud‑first, scalable platforms with effective use of current technology (e.g., PaaS / automation, Infrastructure as Code, etc.)?',a:['Infrastructure is entirely on-premises manual and relies on aging legacy hardware.','A lift-and-shift cloud approach is used treating cloud servers like on-premises VMs.','A hybrid cloud strategy is in place with significant use of managed PaaS services.','Cloud-native principles and Infrastructure as Code (IaC) drive the majority of environment deployments.','Fully automated serverless architecture scales dynamically and self-heals without human intervention.'],w:4.2},
+  {area:'Operations, Platform and Service Delivery',trait:'Effective and efficient IT Operations & Infrastructure',q:'Are all significant operations and infrastructure monitored, observed and performance proactively managed in real time?',a:['Monitoring is non-existent; IT learns about failures when users report them.','Basic up/down monitoring alerts IT to hardware failures after they have occurred.','Centralized logging and alerting provide real-time visibility into the health of all critical systems.','Automated remediation scripts respond to monitoring signals to fix issues in real-time.','Full-stack observability and AIOps predicts and remediates performance degradation before user impact occurs.'],w:4.1,f:1},
+  {area:'Operations, Platform and Service Delivery',trait:'Effective and efficient IT Operations & Infrastructure',q:'How much of infrastructure and operations management, patching, and maintenance is policy‑driven and automated?',a:['All patching and maintenance are performed manually and irregularly by IT staff.','Basic automated tools are used for OS patching but maintenance remains a manual effort.','Policy-driven update management ensures all systems are patched within defined monthly windows.','Infrastructure is maintained as code with automated CI/CD pipelines managing all configuration.','Governance is enforced by automated policy preventing non-compliant or unpatched resources from existing.'],w:4.2},
+  {area:'Operations, Platform and Service Delivery',trait:'Effective and efficient IT Operations & Infrastructure',q:'How quickly can infrastructure and operations environments be recovered or rebuilt if degraded?',a:['Recovery is manual and slow often taking days or weeks to rebuild from scratch.','Environments can be recovered from traditional backups but the process is time-consuming.','Documented recovery procedures and server images allow for restoration within 24-48 hours.','Automated recovery orchestration allows full site restoration within hours using modern replication tools.','Environments are immutable and can be redeployed from code in minutes to a known-good state.'],w:4.5},
+  {area:'Operations, Platform and Service Delivery',trait:'Effective and efficient End-User IT support',q:'How effectively and efficiently do you training all end user on how to leverage available technology and upskill them as appropriate (e.g., for AI)?',a:['No formal training exists; users are left to self-teach or use word-of-mouth.','Periodic training is provided via documents or videos but lacks engagement tracking.','Formal training sessions are scheduled during major rollouts with basic completion tracking.','Proactive digital literacy programs utilize champions and data to target specific skill gaps.','A continuous learning culture is embedded using automated platforms to drive deep technology adoption.'],w:3.5},
+  {area:'Operations, Platform and Service Delivery',trait:'Effective and efficient End-User IT support',q:'How effectively and efficiently do you support the ad hoc requirements of end‑user’ IT infrastructure?',a:['Support is entirely reactive and slow with no formal tracking of end-user requests.','A basic helpdesk handles requests manually with inconsistent resolution times.','Standardized service catalogs allow users to log requests with defined SLA tracking.','Automated self-service portals and zero-touch provisioning handle the majority of hardware requests.','Predictive analytics identify and resolve device issues before the end-user even notices a problem.'],w:3.5},
+  {area:'Operations, Platform and Service Delivery',trait:'Effective and efficient End-User IT support',q:'How effectively and efficiently do you support the end‑users’ applications needs?',a:['Application support is ad-hoc with users frequently bypassing IT for fixes.','IT provides basic support for core applications but lacks specialized expertise for modern apps.','A dedicated team manages application support with documented troubleshooting and update guides.','Application lifecycles are managed through automated deployment and self-service software centers.','Users are empowered with automated help and AI assistants that resolve app issues instantly.'],w:3.8,f:1},
+  {area:'Operations, Platform and Service Delivery',trait:'Effective and efficient End-User IT support',q:'How do you securely provide support to your remote workforce?',a:['Remote support is difficult and insecure; often requiring users to return to the office.','Support is provided via basic VPN and remote desktop tools with manual intervention.','Modern remote management tools (e.g. Intune) provide secure support regardless of user location.','Secure remote support is integrated into the workspace with automated health checks and identity verification.','A global zero-trust support model provides seamless secure assistance and device recovery anywhere in the world.'],w:3.5,f:1},
+  {area:'Operations, Platform and Service Delivery',trait:'Effective and efficient End-User IT support',q:'How responsive and consistent is end‑user support?',a:['Response times are long and unpredictable with high variation in quality between staff.','Support is consistent for basic issues but complex problems often go unresolved.','Defined SLAs and KPIs drive consistent response and resolution times for all support tiers.','Data-driven support queues prioritize issues based on business impact with high first-call resolution.','AI-driven support triage and resolution provide near-instant consistent responses for all common requirements.'],w:3.9,f:1},
+  {area:'Operations, Platform and Service Delivery',trait:'Effective and efficient support to Applications/DevOps',q:'How effectively and efficiently does IT support business‑critical applications?',a:['Critical apps are managed reactively with significant downtime during updates or failures.','Standard maintenance is performed but the relationship between IT and App owners is siloed.','Defined service levels and regular health checks ensure stability for all business-critical apps.','Proactive application monitoring and automated scaling ensure high performance and availability.','Applications are managed as modern digital products with continuous integration and zero-downtime deployments.'],w:3.9,f:1},
+  {area:'Operations, Platform and Service Delivery',trait:'Effective and efficient support to Applications/DevOps',q:'How effective is the RACI between the IT Infrastructure and Application teams (DevOps)?',a:['No formal RACI exists; teams often blame each other during outages or deployments.','Roles are documented but communication is infrequent leading to friction during complex changes.','A clear RACI is in place with regular joint planning meetings between Infrastructure and App teams.','Teams utilize shared tools and automated pipelines to coordinate infrastructure and application changes.','A true DevOps culture exists with cross-functional teams owning the entire lifecycle from code to production.'],w:3.3},
+  {area:'Security & Business Resilience',trait:'Assured continuity of operations in the event of outages, hacks and other disruptions',q:'Do you perform Business Continuity planning for continued operating during an outage [for any reason]?',a:['No formal BCP exists; the organization relies on best effort during an outage.','An informal BCP exists but is not documented or shared across the organization.','A documented BCP identifies critical business functions and manual workarounds during failure.','BCP is integrated into operations with regular staff training and annual tabletop simulations.','Resilience is built into the business model with seamless transitions to alternative operating modes.'],w:4.2,f:1},
+  {area:'Security & Business Resilience',trait:'Assured continuity of operations in the event of outages, hacks and other disruptions',q:'Do you have defined, achievable and validated RTO/RPO objectives for critical systems, based on the business impact if a major system is unavailable?',a:['Recovery targets are undefined and have never been discussed with business owners.','General recovery targets exist but are not validated against actual technical capabilities.','Specific RTO/RPO targets are documented for all critical systems and agreed upon by the business.','Recovery targets are technically validated through quarterly testing to ensure requirements are met.','Near-zero RTO/RPO targets are achieved through continuous replication and automated failover.'],w:4.2},
+  {area:'Security & Business Resilience',trait:'Assured continuity of operations in the event of outages, hacks and other disruptions',q:'Do you have immutable, recoverable and regularly tested backups of all data and systems?',a:['Backups are inconsistent manual and have not been tested for recovery in over a year.','Automated daily backups exist but are stored on-site and are vulnerable to ransomware.','Off-site automated backups are performed daily with monthly sample recovery tests to verify integrity.','Immutable air-gapped backups protect against ransomware with automated success-rate reporting.','Continuous multi-region data protection ensures backups are always available and instantly recoverable.'],w:4.2,f:1},
+  {area:'Security & Business Resilience',trait:'Assured continuity of operations in the event of outages, hacks and other disruptions',q:'Do you have regularly tested High Availability  and Disaster Recovery plans, using techniques such as Chaos Engineering & Stress Testing, which achieve your RTO/RPO objectives?',a:['No HA or DR plans exist; recovery is manual and untested.','Basic DR plans exist but are not regularly tested or aligned to business requirements.','High Availability is configured for critical systems with annual DR testing to validate targets.','Automated failover and regular chaos engineering exercises ensure recovery targets are always met.','Resilience is continuous and self-healing with automated recovery validation across all regions.'],w:4.2},
+  {area:'Security & Business Resilience',trait:'Effective cyber security to protect the company’s data, IP and infrastructure from current and evolving threats',q:'Do you perform structured cyber risk identification utilizing a comprehensive asset inventory and risk register; and update on a regular basis?',a:['Risk identification is non-existent; assets are not tracked and no risk register exists.','Partial asset lists exist but are not linked to a formal risk assessment process.','A comprehensive asset inventory and risk register are maintained and reviewed quarterly.','Automated asset discovery and continuous risk assessments are integrated into the security posture.','Real-time asset intelligence and risk-scoring drive proactive security investments and response.'],w:3.7},
+  {area:'Security & Business Resilience',trait:'Effective cyber security to protect the company’s data, IP and infrastructure from current and evolving threats',q:'How effective and tightly controlled are your identity and access management systems?',a:['Passwords are weak MFA is not enforced and former employees retain access indefinitely.','MFA is used for some systems but identity management remains manual and decentralized.','Centralized identity (SSO) and MFA are enforced for all users and critical applications.','Conditional Access policies and Just-In-Time admin rights ensure secure risk-based access control.','Full Zero-Trust architecture continuously verifies every access request based on full device context.'],w:4.2,f:1},
+  {area:'Security & Business Resilience',trait:'Effective cyber security to protect the company’s data, IP and infrastructure from current and evolving threats',q:'Have you defined and implemented vulnerability and patch management processes?',a:['Patching is performed manually and irregularly with no tracking of vulnerabilities.','Basic automated patching is in place for OS but third-party apps remain unmanaged.','A formal patch management policy ensures all critical systems are updated monthly.','Vulnerability scanning and automated patching are integrated into a risk-based remediation workflow.','Real-time vulnerability orchestration automatically remediates threats across all endpoints and cloud resources.'],w:4.2},
+  {area:'Security & Business Resilience',trait:'Effective cyber security to protect the company’s data, IP and infrastructure from current and evolving threats',q:'Do you perform continuous threat detection, monitoring and posture management, capable of countering the current and evolving threat landscape?',a:['Threat detection is non-existent; IT learns of breaches from external sources.','Basic antivirus and log checking provide limited visibility into security events.','A centralized SOC or SIEM provides 24/7 monitoring and alerting for critical security events.','XDR and automated threat hunting provide proactive detection and response across the environment.','AI-driven security operations provide autonomous threat detection and posture management in real-time.'],w:4.1,f:1},
+  {area:'Security & Business Resilience',trait:'Effective cyber security to protect the company’s data, IP and infrastructure from current and evolving threats',q:'Do you have a documented and tested incident response capability?',a:['No incident response plan exists; breaches are handled ad-hoc by IT.','A basic IR plan is documented but has never been tested with stakeholders.','A formal IR plan defines roles and procedures with annual tabletop testing.','Automated IR playbooks and a 24/7 response partner ensure rapid containment of breaches.','Incident response is integrated into a continuous improvement cycle using AI to predict and block attacks.'],w:4.0,f:1},
+  {area:'Security & Business Resilience',trait:'Effective cyber security to protect the company’s data, IP and infrastructure from current and evolving threats',q:'Is cyber security awareness embedded, and owned, across the organization?',a:['No security training is provided; users are unaware of common threats like phishing.','Annual security training is mandated but there is no measurement of behavior change.','Regular phishing simulations and monthly awareness updates drive a foundational security culture.','Security is a shared responsibility with department champions and clear reporting of suspicious activity.','A proactive security-first culture is embedded in all business processes driven by executive leadership.'],w:3.5,f:1},
+  {area:'Digital Enablement and Future Capability',trait:'Modern Digital Workplace, Experience & Adoption',q:'How well does IT train and enable the workforce to utilize all available technology assets to work productively, effectively, securely and flexibly?',a:['Training is non-existent; users struggle to use basic productivity tools effectively.','Ad-hoc training is provided but lacks a cohesive strategy for modern ways of working.','A formal digital enablement program provides targeted training for M365 and remote work.','Proactive coaching and data-driven learning paths drive high productivity across all digital tools.','IT is a business enabler providing seamless onboarding and advanced digital literacy for every role.'],w:3.5},
+  {area:'Digital Enablement and Future Capability',trait:'Modern Digital Workplace, Experience & Adoption',q:'Do you proactively monitor and measure employee experience and use of (current and) of available technology assets ?',a:['Employee experience is not measured; IT is unaware of user frustration.','Ad-hoc surveys provide occasional feedback on user satisfaction with IT.','Standard DEX tools monitor device health and basic application performance.','Comprehensive telemetry measures digital friction and employee sentiment across the entire estate.','AI-driven insights proactively improve the digital experience before employees encounter friction.'],w:3.6},
+  {area:'Digital Enablement and Future Capability',trait:'Modern Digital Workplace, Experience & Adoption',q:'Do you understand and address the challenges in workforce adoption and use of available technology assets?',a:['Adoption challenges are ignored; technology is deployed without regard for user use.','IT is aware of low adoption but lacks a formal process to address it.','A formal change management process identifies and addresses adoption barriers for new tools.','Data-driven adoption programs target specific groups to maximize the value of existing tech.','Continuous feedback loops and AI-assisted support ensure frictionless adoption of all new capabilities.'],w:3.3},
+  {area:'Digital Enablement and Future Capability',trait:'Comprehensive use of Automation as appropriate',q:'What is IT’s role in process automation?',a:['IT has no role in automation; business processes are manual or siloed.','IT provides basic tools for automation but does not lead or support initiatives.','IT leads a centralized automation team that delivers projects for specific business units.','IT provides a governed platform for citizen developers to build their own automations.','IT is an automation-first organization where every repeatable process is candidates for AI/RPA.'],w:3.9},
+  {area:'Digital Enablement and Future Capability',trait:'Comprehensive use of Automation as appropriate',q:'Is there a systematic, comprehensive approach to identify, prioritize, plan and prosecute potential areas of automation across the company?',a:['Automation opportunities are identified ad-hoc with no formal prioritization.','A list of potential automation projects exists but lacks a structured delivery plan.','A formal automation roadmap prioritizes projects based on complexity and business benefit.','A center of excellence (CoE) proactively identifies and delivers automation across all departments.','Automation is core to the business strategy with a continuous pipeline of high-impact initiatives.'],w:3.8},
+  {area:'Digital Enablement and Future Capability',trait:'Comprehensive use of Automation as appropriate',q:'What have been and what are projected to be the ROI with each discrete automation initiative?',a:['ROI for automation is not measured or tracked.','Basic time-savings are estimated but not validated after implementation.','Standardized ROI models track the financial and operational impact of all major automations.','Comprehensive value tracking measures hard and soft savings across the entire automation portfolio.','Automation ROI is visible in real-time with continuous optimization of bots and workflows for value.'],w:3.3},
+  {area:'Digital Enablement and Future Capability',trait:'Effective approach for reviewing Innovation & AI to provide for performance improvement and competitive differentiation',q:'Is there a defined IT Innovation / AI strategy, encompassing governance and responsible use (including personal AI accounts with company data), tied to clear business goals?',a:['No AI strategy exists; users utilize shadow AI without any governance.','A high-level AI policy exists but is not linked to business goals or technical controls.','A formal AI strategy defines governed use cases and ethical guardrails for the business.','The AI strategy is integrated into the business roadmap with specific investment in secure AI platforms.','Innovation is constant with AI embedded in the business model under autonomous ethical governance.'],w:3.6},
+  {area:'Digital Enablement and Future Capability',trait:'Effective approach for reviewing Innovation & AI to provide for performance improvement and competitive differentiation',q:'Does you provide AI (and other innovation tools) to all users outside of devops, such that end users can build, deploy, test, iterate, and learn from AI failures? Is AI AI integrated into real workflows, secure and delivering measurable outcomes?',a:['AI access is restricted to IT or blocked entirely for general users.','Users have access to public AI tools but with no integration into business workflows.','Enterprise AI tools (e.g. Copilot) are provided with basic training for standard users.','AI is integrated into core business workflows with secure sandboxes for user experimentation.','Every employee is an innovator with AI assistants co-creating value across all secure workflows.'],w:3.8},
+  {area:'Digital Enablement and Future Capability',trait:'Effective approach for reviewing Innovation & AI to provide for performance improvement and competitive differentiation',q:'Does you provide "Just-Enough-Access" to ensure that LLMs don\'t index and expose sensitive or over-shared internal data while fostering a "Citizen Developer" community where business users build their own AI-driven automations under IT guardrails?',a:['Data access is ungoverned; AI models risk exposing sensitive internal information.','Basic permissions are in place but data over-sharing remains a significant risk.','Data classification and sensitivity labels protect sensitive info from being indexed by AI.','A zero-trust data model and governed Power Platform enable safe citizen development at scale.','AI-driven governance automatically protects sensitive data while allowing full innovation freedom.'],w:3.7},
+  {area:'Digital Enablement and Future Capability',trait:'Effective approach for reviewing Innovation & AI to provide for performance improvement and competitive differentiation',q:'Do you measure the specific value AI delivers (e.g., time saved)?',a:['AI value is not measured; use is considered experimental only.','Qualitative feedback is collected on AI use but lacks financial metrics.','Standardized metrics track time-savings and productivity gains from AI tool adoption.','Comprehensive value-realization dashboards track AI impact on business growth and innovation.','AI value is measured in real-time as a core driver of business profitability and performance.'],w:3.0},
+  {area:'Digital Enablement and Future Capability',trait:'Comprehensive, Usable, Data Intelligence, Analytics and Information Management',q:'Do you have a single source of truth, centralized data repository (e.g., Data Warehouse or Data Lake) that is used as the primary source for reporting',a:['Data is stored in disconnected spreadsheets and departmental silos with no centralized reporting.','A basic data repository exists but requires manual data entry and suffers from poor accuracy.','A centralized Data Warehouse or Lakehouse provides a single source of truth for all key reporting.','Advanced data pipelines automate the flow of real-time data into a unified analytics platform.','A self-healing data ecosystem provides a unified view of the business to all users and AI models.'],w:4.1},
+  {area:'Digital Enablement and Future Capability',trait:'Comprehensive, Usable, Data Intelligence, Analytics and Information Management',q:'Have you categorized your data (e.g., as IP or PII) and implemented access and data management systems appropriately allow access to your data?',a:['Data is not categorized; access is granted ad-hoc with high risk of exposure.','Manual data classification is attempted but is incomplete and rarely updated.','A formal data classification policy is enforced with automated tagging for sensitive data.','Identity-governed data access ensures only authorized users can see sensitive IP or PII.','AI-driven data management automatically classifies and secures all data throughout its lifecycle.'],w:3.6},
+  {area:'Digital Enablement and Future Capability',trait:'Comprehensive, Usable, Data Intelligence, Analytics and Information Management',q:'Is the movement of data from source systems (ERP, CRM) to the warehouse automated and monitored for failure?',a:['Data movement is manual; involving fragmented exports and spreadsheet imports.','Basic ETL scripts move data but lack centralized monitoring or failure alerting.','Automated data pipelines move data nightly with central monitoring and IT alerts.','Real-time data streaming and automated error remediation ensure data is always fresh and accurate.','Autonomous data orchestration manages all pipelines with self-healing capabilities for zero downtime.'],w:3.9},
+  {area:'Digital Enablement and Future Capability',trait:'Comprehensive, Usable, Data Intelligence, Analytics and Information Management',q:'Can business users easily and effectively “self-service” with AI and other tools to do their own analysis and reporting (e.g., via Power BI) using the centralized data repository ?',a:['Users must request all reports from IT leading to long delays and manual workarounds.','Some users have access to BI tools but lack the training or clean data to be effective.','Certified datasets and standardized BI tools allow trained users to build their own reports.','A robust self-service portal provides all users with access to pre-modeled data and AI insights.','Data is democratized with users building sophisticated governed analytics and automations independently.'],w:3.9},
+  {area:'Digital Enablement and Future Capability',trait:'Comprehensive, Usable, Data Intelligence, Analytics and Information Management',q:'Have you implemented an effective, policy-driven approach to Data Retention & Archiving?',a:['No data retention policy exists; all data is kept indefinitely by default.','A formal retention policy is documented but relies on manual deletion by users.','Policy-driven automated retention and archiving are implemented for core business systems.','Comprehensive data lifecycle management automatically archives or deletes data based on risk and value.','AI-driven data governance optimizes retention to minimize risk and storage costs automatically.'],w:3.1},
+  {area:'Digital Enablement and Future Capability',trait:'Comprehensive, Usable, Data Intelligence, Analytics and Information Management',q:'Can you articulate the specific financial value or cost-savings derived from data-driven decisions and user-led analysis?',a:['The business cannot identify any financial benefit from its data and analysis.','Anecdotal evidence suggests some data-driven improvements but lacks hard data.','Specific business cases track the financial impact of major data and analytics projects.','A formal value-realization framework measures the ROI of all data-led business decisions.','Data is treated as a strategic balance-sheet asset with real-time value tracking and growth.'],w:3.2}
+];
+
+var AREAS = (function() {
+  var seen = {}, out = [];
+  QUESTIONS.forEach(function(q){ if(!seen[q.area]){seen[q.area]=1;out.push(q.area);} });
+  return out;
+})();
+
+var GROUPS = AREAS.map(function(area) {
+  var qs = QUESTIONS.map(function(q,i){return Object.assign({},q,{idx:i});}).filter(function(q){return q.area===area;});
+  var traitSeen = {}, traits = [];
+  qs.forEach(function(q){ if(!traitSeen[q.trait]){traitSeen[q.trait]=1;traits.push(q.trait);} });
+  return { area:area, traits:traits.map(function(t){ return {trait:t, questions:qs.filter(function(q){return q.trait===t;})}; }) };
+});
+
+var answers  = new Array(QUESTIONS.length).fill(null);
+var comments = new Array(QUESTIONS.length).fill('');
+var currentGroup = 0;
+var customerName = '';
+var staffName    = '';
+var printMode    = null; // 'summary' | 'questions'
+
+// ── helpers ──
+function show(id) {
+  ['screen-intro','screen-questions','screen-results'].forEach(function(s){
+    document.getElementById(s).classList.remove('active');
+  });
+  var el = document.getElementById(id);
+  if(el) el.classList.add('active');
+}
+
+function updateProgress() {
+  var total = answers.length, done = 0;
+  for (var i = 0; i < total; i++) if (answers[i] !== null) done++;
+  var pct = (done / total) * 100;
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-pct').textContent  = done + ' / ' + total;
+}
+function setProgress(_ignored) { updateProgress(); }
+
+function updateTopbar(meta) {
+  document.getElementById('topbar-meta').textContent = meta || '';
+}
+
+// ── start ──
+function startAssessment() {
+  customerName = document.getElementById('inp-customer').value.trim();
+  staffName    = document.getElementById('inp-staff').value.trim();
+  if (!customerName || !staffName) { alert('Please enter both names.'); return; }
+  currentGroup = 0;
+  setProgress(0);
+  updateTopbar(customerName + ' \u2014 ' + staffName);
+  renderGroup();
+  show('screen-questions');
+  window.scrollTo(0,0);
+}
+
+// ── render a section ──
+function renderGroup() {
+  var g   = GROUPS[currentGroup];
+  var pct = (currentGroup / GROUPS.length) * 100;
+  setProgress(pct);
+  updateTopbar(customerName + ' \u2014 ' + g.area);
+  renderTabs();
+
+  var totalQs = g.traits.reduce(function(s,t){return s+t.questions.length;},0);
+  document.getElementById('section-hd').innerHTML =
+    '<span class="section-badge">Section ' + (currentGroup+1) + ' of ' + GROUPS.length + '</span>' +
+    '<h2>' + g.area + '</h2>' +
+    '<p class="section-summary">' + escHtml(AREA_SUMMARIES[g.area] || '') + '</p>' + '<p class="section-meta">' + g.traits.length + ' traits \u00a0\u00b7\u00a0 ' + totalQs + ' questions</p>';
+
+  var container = document.getElementById('q-container');
+  container.innerHTML = '';
+
+  g.traits.forEach(function(tg) {
+    var tDiv = document.createElement('div');
+    tDiv.className = 'trait-group';
+    var tHd = document.createElement('div');
+    tHd.className = 'trait-hd';
+    tHd.textContent = tg.trait;
+    tDiv.appendChild(tHd);
+
+    tg.questions.forEach(function(q) {
+      var val      = answers[q.idx];
+      var touched  = val !== null;
+      var sliderV  = touched ? val : 1;
+      var scoreTxt = touched ? val : '\u2014';
+      var wordTxt  = touched ? IML_LABELS[val-1] : 'Not rated';
+      var ansTxt   = touched ? q.a[val-1] : 'Move the slider to set a rating.';
+      var cmt      = comments[q.idx];
+      var card = document.createElement('div');
+      card.className = 'q-card' + (touched ? ' touched' : ' untouched');
+      card.id = 'card-' + q.idx;
+      card.innerHTML =
+        '<div class="q-top">' +
+          '<div class="q-left">' +
+            '<div class="q-trait-label">' + escHtml(q.trait) + '</div>' +
+            '<div class="q-num-row">' +
+              '<span class="q-num">Q' + (q.idx+1) + '</span>' +
+              '<span class="q-weight" title="Priority weighting (1–5, higher = focus first)">Weighting <strong>' + q.w.toFixed(1) + '</strong></span>' +
+              (q.f ? '<span class="q-foundational" title="Foundational capability">Foundational</span>' : '') +
+            '</div>' +
+            '<div class="q-text">' + escHtml(q.q) + '</div>' +
+          '</div>' +
+          '<div class="iml-live">' +
+            '<span class="iml-score" id="iml-score-' + q.idx + '">' + scoreTxt + '</span>' +
+            '<span class="iml-word"  id="iml-word-'  + q.idx + '">' + wordTxt + '</span>' +
+          '</div>' +
+        '</div>' +
+        '<input type="range" min="1" max="5" step="1" value="' + sliderV + '" id="slider-' + q.idx + '" oninput="onSlider(' + q.idx + ',this.value)" />' +
+        '<div class="slider-ends"><span>1 \u2014 Nascent</span><span>5 \u2014 Innovating</span></div>' +
+        '<div class="q-bottom">' +
+          '<div class="ans-box">' +
+            '<div class="ans-label">Selected answer</div>' +
+            '<div class="ans-text' + (touched ? ' lit' : '') + '" id="ans-' + q.idx + '">' + escHtml(ansTxt) + '</div>' +
+          '</div>' +
+          '<div class="comment-box">' +
+            '<div class="comment-label">Commentary (optional)</div>' +
+            '<textarea class="comment-input" id="cmt-' + q.idx + '" placeholder="Add context or notes\u2026" oninput="onComment(' + q.idx + ',this.value)">' + escHtml(cmt) + '</textarea>' +
+          '</div>' +
+        '</div>';
+      tDiv.appendChild(card);
+    });
+    container.appendChild(tDiv);
+  });
+
+  document.getElementById('nav-info').textContent = 'Section ' + (currentGroup+1) + ' of ' + GROUPS.length;
+  document.getElementById('btn-back').disabled    = currentGroup === 0;
+  document.getElementById('btn-next').textContent = currentGroup === GROUPS.length-1 ? 'View results \u2192' : 'Next \u2192';
+}
+
+function onSlider(idx, rawVal) {
+  var val = parseInt(rawVal);
+  var wasNull = answers[idx] === null;
+  answers[idx] = val;
+  document.getElementById('iml-score-'+idx).textContent = val;
+  document.getElementById('iml-word-'+idx).textContent  = IML_LABELS[val-1];
+  var ansEl = document.getElementById('ans-'+idx);
+  ansEl.textContent = QUESTIONS[idx].a[val-1];
+  ansEl.className   = 'ans-text lit';
+  var cardEl = document.getElementById('card-'+idx);
+  cardEl.classList.add('touched');
+  cardEl.classList.remove('untouched');
+  if (wasNull) updateProgress();
+}
+
+function onComment(idx, val) {
+  comments[idx] = val;
+}
+
+function nextGroup() {
+  // save any comment textarea values before navigating away
+  saveComments();
+  if (currentGroup < GROUPS.length-1) { currentGroup++; renderGroup(); window.scrollTo(0,0); }
+  else {
+    var unrated = 0;
+    for (var i = 0; i < answers.length; i++) if (answers[i] === null) unrated++;
+    if (unrated > 0) {
+      alert(unrated + ' question' + (unrated === 1 ? ' is' : 's are') + ' still unrated. Please rate every question before viewing results.');
+      return;
+    }
+    showResults();
+  }
+}
+function prevGroup() {
+  saveComments();
+  if (currentGroup > 0) { currentGroup--; renderGroup(); window.scrollTo(0,0); }
+}
+
+function saveComments() {
+  // Persist textarea values that may not have triggered oninput
+  GROUPS[currentGroup].traits.forEach(function(tg) {
+    tg.questions.forEach(function(q) {
+      var el = document.getElementById('cmt-'+q.idx);
+      if (el) comments[q.idx] = el.value;
+    });
+  });
+}
+
+// ── results ──
+function showResults() {
+  setProgress(100);
+  updateTopbar(customerName + ' \u2014 Results');
+
+  var total    = answers.reduce(function(s,v){return s+v;},0);
+  var maxTotal = QUESTIONS.length * 5;
+  var pct      = Math.round((total/maxTotal)*100);
+  var avgIML   = (total/QUESTIONS.length).toFixed(2);
+  var imlLevel = Math.min(Math.round(total/QUESTIONS.length),5);
+
+  var areaStats = AREAS.map(function(area) {
+    var qs    = QUESTIONS.map(function(q,i){return Object.assign({},q,{idx:i});}).filter(function(q){return q.area===area;});
+    var score = qs.reduce(function(s,q){return s+answers[q.idx];},0);
+    var max   = qs.length*5;
+    return {area:area,score:score,max:max,pct:Math.round((score/max)*100)};
+  });
+
+  var allTraits = (function(){var seen={},out=[];QUESTIONS.forEach(function(q){if(!seen[q.trait]){seen[q.trait]=1;out.push(q.trait);}});return out;})();
+  var traitStats = allTraits.map(function(trait) {
+    var qs    = QUESTIONS.map(function(q,i){return Object.assign({},q,{idx:i});}).filter(function(q){return q.trait===trait;});
+    var score = qs.reduce(function(s,q){return s+answers[q.idx];},0);
+    var max   = qs.length*5;
+    return {trait:trait,area:qs[0].area,score:score,max:max,avg:(score/qs.length).toFixed(1)};
+  });
+
+  var AREA_SHORT = {
+    'Strategy, Governance and Investment': 'Strategy',
+    'Operations, Platform and Service Delivery': 'Operations',
+    'Security & Business Resilience': 'Security',
+    'Digital Enablement and Future Capability': 'Digital'
+  };
+  var priorityList = QUESTIONS.map(function(q,i){
+    return { idx:i, q:q.q, area:q.area, trait:q.trait, iml:answers[i], w:q.w, f:!!q.f, score:q.w*(6-answers[i]) };
+  }).sort(function(a,b){
+    if (b.score !== a.score) return b.score - a.score;
+    if (b.w !== a.w) return b.w - a.w;
+    return a.iml - b.iml;
+  });
+
+  var now     = new Date();
+  var dateStr = now.toLocaleDateString('en-NZ',{day:'numeric',month:'long',year:'numeric'});
+
+  var areaRows = areaStats.map(function(a){
+    return '<div class="area-row"><div class="area-row-top"><span class="area-name">'+a.area+'</span><span class="area-sc">'+a.score+' / '+a.max+' \u00a0\u00b7\u00a0 '+a.pct+'%</span></div><div class="bar-bg"><div class="bar-fill" data-pct="'+a.pct+'"></div></div></div>';
+  }).join('');
+
+  var traitRows = traitStats.map(function(t){
+    return '<tr><td>'+escHtml(t.trait)+'</td><td style="color:var(--text3)">'+escHtml(t.area)+'</td><td style="color:var(--text3)">IML '+t.avg+'</td><td>'+t.score+' / '+t.max+'</td></tr>';
+  }).join('');
+
+  var priorityRows = priorityList.map(function(p, rank){
+    var atMax = p.iml >= 5;
+    var nextIml = atMax ? 5 : p.iml + 1;
+    var currentTxt = QUESTIONS[p.idx].a[p.iml-1];
+    var nextTxt = atMax ? '' : QUESTIONS[p.idx].a[p.iml];
+    var recs = RECS[p.idx] || [];
+    var recsHtml = recs.map(function(r){return '<li>'+escHtml(r)+'</li>';}).join('');
+    return '<tr class="priority-row" onclick="togglePriority('+rank+')" id="prow-'+rank+'">' +
+      '<td style="color:var(--text3);width:56px;font-variant-numeric:tabular-nums;white-space:nowrap"><span class="priority-caret">\u25B6</span> Q'+(p.idx+1)+'</td>' +
+      '<td>'+escHtml(p.q)+(p.f?' <span class="q-foundational" style="font-size:9px;padding:1px 7px;margin-left:4px;vertical-align:middle">Foundational</span>':'')+'</td>' +
+      '<td style="color:var(--text3);white-space:nowrap">'+escHtml(AREA_SHORT[p.area]||p.area)+'</td>' +
+      '<td style="text-align:right;font-variant-numeric:tabular-nums">'+p.iml+'</td>' +
+      '<td style="text-align:right;font-variant-numeric:tabular-nums">'+p.w.toFixed(1)+'</td>' +
+      '<td style="text-align:right;font-variant-numeric:tabular-nums;color:var(--text)">'+p.score.toFixed(1)+'</td>' +
+    '</tr>' +
+    '<tr class="priority-detail-row" id="pdetail-'+rank+'" style="display:none">' +
+      '<td colspan="6">' +
+        '<div class="priority-detail">' +
+          '<h4>Q'+(p.idx+1)+' \u2014 Current state: IML '+p.iml+' ('+IML_LABELS[p.iml-1]+')</h4>' +
+          '<div class="pd-state">'+escHtml(currentTxt)+'</div>' +
+          (atMax
+            ? '<h4>Already at top IML \u2014 focus on sustaining innovation</h4>'
+            : '<h4>Target state: IML '+nextIml+' ('+IML_LABELS[nextIml-1]+')</h4>' +
+              '<div class="pd-state">'+escHtml(nextTxt)+'</div>') +
+          '<h4>Top 5 recommendations to advance</h4>' +
+          '<ol>'+recsHtml+'</ol>' +
+        '</div>' +
+      '</td>' +
+    '</tr>';
+  }).join('');
+
+  var scatterSvg = buildScatter(priorityList);
+
+  document.getElementById('results-content').innerHTML =
+    '<div class="res-hd">' +
+      '<div class="eyebrow">Assessment complete \u2014 '+dateStr+'</div>' +
+      '<h1>'+escHtml(customerName)+'</h1>' +
+      '<p>Assessed by '+escHtml(staffName)+'</p>' +
+    '</div>' +
+    '<div class="meta-grid">' +
+      '<div class="meta-card"><div class="lbl">Customer</div><div class="val">'+escHtml(customerName)+'</div></div>' +
+      '<div class="meta-card"><div class="lbl">Assessed by</div><div class="val">'+escHtml(staffName)+'</div></div>' +
+      '<div class="meta-card"><div class="lbl">Date</div><div class="val">'+dateStr+'</div></div>' +
+      '<div class="meta-card"><div class="lbl">Questions</div><div class="val">'+QUESTIONS.length+' / '+QUESTIONS.length+'</div></div>' +
+    '</div>' +
+    '<div class="score-display">' +
+      '<div class="score-lbl">Total score</div>' +
+      '<div><span class="score-big">'+total+'</span><span class="score-denom"> / '+maxTotal+'</span></div>' +
+      '<div class="score-pct">'+pct+'%</div>' +
+      '<div class="iml-chip">Overall IML '+avgIML+' \u2014 '+IML_LABELS[imlLevel-1]+'</div>' +
+    '</div>' +
+    '<div class="breakdown"><h3>Score by area</h3>'+areaRows+'</div>' +
+    '<div class="breakdown"><h3>Score by trait</h3>' +
+      '<table class="trait-tbl"><thead><tr><th>Trait</th><th>Area</th><th>Avg IML</th><th>Score</th></tr></thead>' +
+      '<tbody>'+traitRows+'</tbody></table>' +
+    '</div>' +
+    '<div class="breakdown"><h3>Priority map</h3>' +
+      '<p style="font-size:12px;color:var(--text3);margin-bottom:1rem;line-height:1.5;max-width:560px">Each question plotted by current IML and weighting. Items in the top-right are low-IML / high-weighting \u2014 the priority focus zone.</p>' +
+      '<div class="scatter-wrap">'+scatterSvg+
+        '<div class="scatter-legend">' +
+          '<span class="scatter-legend-item"><span class="scatter-legend-dot"></span>Standard</span>' +
+          '<span class="scatter-legend-item"><span class="scatter-legend-dot solid"></span>Foundational</span>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="breakdown"><h3>Priority focus order</h3>' +
+      '<p style="font-size:12px;color:var(--text3);margin-bottom:1rem;line-height:1.5;max-width:560px">Sorted by Weighting \u00d7 (6 \u2212 IML). Click any row to see the current state, target state, and 5 recommendations to advance.</p>' +
+      '<div style="overflow-x:auto"><table class="trait-tbl"><thead><tr><th style="width:56px">Q#</th><th>Question</th><th>Area</th><th style="text-align:right">IML</th><th style="text-align:right">W</th><th style="text-align:right">Priority</th></tr></thead>' +
+      '<tbody>'+priorityRows+'</tbody></table></div>' +
+    '</div>' +
+    '<div class="res-actions">' +
+      '<button class="btn btn-primary" onclick="exportXLSX()">Export to Excel</button>' +
+      '<button class="btn" onclick="resetForm()">New assessment</button>' +
+    '</div>';
+
+  show('screen-results');
+  window.scrollTo(0,0);
+
+  requestAnimationFrame(function(){
+    document.querySelectorAll('.bar-fill').forEach(function(el,i){
+      var p = el.getAttribute('data-pct');
+      setTimeout(function(){ el.style.width = p+'%'; }, 80+i*130);
+    });
+  });
+}
+
+// ── Print: Summary ──
+function printSummary() {
+  var total    = answers.reduce(function(s,v){return s+v;},0);
+  var maxTotal = QUESTIONS.length*5;
+  var pct      = Math.round((total/maxTotal)*100);
+  var avgIML   = (total/QUESTIONS.length).toFixed(2);
+  var imlLevel = Math.min(Math.round(total/QUESTIONS.length),5);
+
+  var areaStats = AREAS.map(function(area) {
+    var qs    = QUESTIONS.map(function(q,i){return Object.assign({},q,{idx:i});}).filter(function(q){return q.area===area;});
+    var score = qs.reduce(function(s,q){return s+answers[q.idx];},0);
+    var max   = qs.length*5;
+    return {area:area,score:score,max:max,pct:Math.round((score/max)*100)};
+  });
+
+  var allTraits = (function(){var seen={},out=[];QUESTIONS.forEach(function(q){if(!seen[q.trait]){seen[q.trait]=1;out.push(q.trait);}});return out;})();
+  var traitStats = allTraits.map(function(trait) {
+    var qs    = QUESTIONS.map(function(q,i){return Object.assign({},q,{idx:i});}).filter(function(q){return q.trait===trait;});
+    var score = qs.reduce(function(s,q){return s+answers[q.idx];},0);
+    var max   = qs.length*5;
+    return {trait:trait,area:qs[0].area,score:score,max:max,avg:(score/qs.length).toFixed(1)};
+  });
+
+  var now     = new Date();
+  var dateStr = now.toLocaleDateString('en-NZ',{day:'numeric',month:'long',year:'numeric'});
+
+  var areaRowsHtml = areaStats.map(function(a){
+    return '<div class="print-area-row"><span>'+escHtml(a.area)+'</span><span>'+a.score+' / '+a.max+' \u00a0\u00b7\u00a0 '+a.pct+'%</span></div>';
+  }).join('');
+
+  var traitRowsHtml = traitStats.map(function(t){
+    return '<tr><td>'+escHtml(t.trait)+'</td><td style="color:#a09f9a">'+escHtml(t.area)+'</td><td style="color:#a09f9a">IML '+t.avg+'</td><td>'+t.score+' / '+t.max+'</td></tr>';
+  }).join('');
+
+  document.getElementById('print-summary-content').innerHTML =
+    '<h1>'+escHtml(customerName)+'</h1>' +
+    '<p class="sub">IT Maturity Assessment \u2014 '+dateStr+' \u2014 Assessed by '+escHtml(staffName)+'</p>' +
+    '<div class="print-meta-grid">' +
+      '<div class="print-meta-item"><div class="pm-lbl">Customer</div><div class="pm-val">'+escHtml(customerName)+'</div></div>' +
+      '<div class="print-meta-item"><div class="pm-lbl">Assessed by</div><div class="pm-val">'+escHtml(staffName)+'</div></div>' +
+      '<div class="print-meta-item"><div class="pm-lbl">Date</div><div class="pm-val">'+dateStr+'</div></div>' +
+      '<div class="print-meta-item"><div class="pm-lbl">Questions answered</div><div class="pm-val">'+QUESTIONS.length+' / '+QUESTIONS.length+'</div></div>' +
+    '</div>' +
+    '<div class="print-score-block">' +
+      '<div class="ps-lbl">Total score</div>' +
+      '<div><span class="ps-num">'+total+'</span><span style="font-size:20px;color:#a09f9a"> / '+maxTotal+'</span></div>' +
+      '<div class="ps-pct">'+pct+'%</div>' +
+      '<div class="ps-iml">Overall IML '+avgIML+' \u2014 '+IML_LABELS[imlLevel-1]+'</div>' +
+    '</div>' +
+    '<div class="print-area-section"><h3>Score by area</h3>'+areaRowsHtml+'</div>' +
+    '<div class="print-area-section"><h3>Score by trait</h3>' +
+      '<table class="print-trait-tbl"><thead><tr><th>Trait</th><th>Area</th><th>Avg IML</th><th>Score</th></tr></thead>' +
+      '<tbody>'+traitRowsHtml+'</tbody></table>' +
+    '</div>';
+
+  printMode = 'summary';
+  window.print();
+  printMode = null;
+}
+
+// ── Print: Questions ──
+function printQuestions() {
+  var now     = new Date();
+  var dateStr = now.toLocaleDateString('en-NZ',{day:'numeric',month:'long',year:'numeric'});
+
+  var html = '<h1>'+escHtml(customerName)+'</h1>' +
+    '<p class="sub">IT Maturity Assessment \u2014 All Questions &amp; Answers \u2014 '+dateStr+' \u2014 Assessed by '+escHtml(staffName)+'</p>';
+
+  GROUPS.forEach(function(g) {
+    var totalQs = g.traits.reduce(function(s,t){return s+t.questions.length;},0);
+    html += '<div class="pq-area">';
+    html += '<div class="pq-area-title">'+escHtml(g.area)+'</div>';
+    html += '<div class="pq-area-sub">'+g.traits.map(function(t){return escHtml(t.trait);}).join(' \u00b7 ')+' \u00a0\u00b7\u00a0 '+totalQs+' questions</div>';
+
+    g.traits.forEach(function(tg) {
+      html += '<div class="pq-trait">';
+      html += '<div class="pq-trait-title">'+escHtml(tg.trait)+'</div>';
+
+      tg.questions.forEach(function(q) {
+        var val = answers[q.idx];
+        var cmt = comments[q.idx];
+        html += '<div class="pq-q">';
+        html += '<div class="pq-q-top">' +
+          '<div class="pq-q-text"><span style="font-size:10px;text-transform:uppercase;letter-spacing:0.05em;color:#a09f9a;display:inline-block;margin-bottom:3px">Q'+(q.idx+1)+'</span><span class="pq-weight">Weighting <strong>'+q.w.toFixed(1)+'</strong></span>'+(q.f?'<span class="pq-foundational">Foundational</span>':'')+'<div style="margin-top:5px">'+escHtml(q.q)+'</div></div>' +
+          '<div class="pq-iml"><div class="pq-iml-num">'+val+'</div><div class="pq-iml-lbl">'+IML_LABELS[val-1]+'</div></div>' +
+        '</div>';
+        html += '<div class="pq-answer">'+escHtml(q.a[val-1])+'</div>';
+        if (cmt && cmt.trim()) {
+          html += '<div class="pq-comment"><div class="pq-comment-lbl">Commentary</div>'+escHtml(cmt)+'</div>';
+        }
+        html += '</div>';
+      });
+      html += '</div>';
+    });
+    html += '</div>';
+  });
+
+  document.getElementById('print-questions-content').innerHTML = html;
+  printMode = 'questions';
+  window.print();
+  printMode = null;
+}
+
+// ── Before print: show only the right section ──
+window.addEventListener('beforeprint', function() {
+  document.getElementById('print-summary').style.display   = printMode==='summary'   ? 'block' : 'none';
+  document.getElementById('print-questions').style.display = printMode==='questions' ? 'block' : 'none';
+  document.querySelector('.page').style.display = 'none';
+  document.getElementById('topbar').style.display = 'none';
+});
+window.addEventListener('afterprint', function() {
+  document.getElementById('print-summary').style.display   = 'none';
+  document.getElementById('print-questions').style.display = 'none';
+  document.querySelector('.page').style.display = '';
+  document.getElementById('topbar').style.display = '';
+});
+
+var SAMPLE_ANSWERS = [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 2, 2, 3, 2, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 2, 2, 2, 2, 2, 2, 2, 2, 3, 2, 2, 2, 2, 2, 1, 2, 2, 1, 1, 1, 2, 1, 1, 2, 2, 2, 2, 2, 1];
+function fillSampleData() {
+  customerName = 'Sample Org';
+  staffName    = 'Sample user';
+  document.getElementById('inp-customer').value = customerName;
+  document.getElementById('inp-staff').value    = staffName;
+  answers  = SAMPLE_ANSWERS.slice();
+  comments = new Array(QUESTIONS.length).fill('');
+  currentGroup = GROUPS.length - 1;
+  updateTopbar(customerName + ' — Results');
+  updateProgress();
+  showResults();
+}
+
+function resetForm() {
+  answers      = new Array(QUESTIONS.length).fill(null);
+  comments     = new Array(QUESTIONS.length).fill('');
+  currentGroup = 0;
+  setProgress(0);
+  updateTopbar('');
+  document.getElementById('inp-customer').value = '';
+  document.getElementById('inp-staff').value    = '';
+  show('screen-intro');
+  window.scrollTo(0,0);
+}
+
+
+
+var AREA_TAB_LABELS = {
+  'Strategy, Governance and Investment': 'Strategy',
+  'Operations, Platform and Service Delivery': 'Operations',
+  'Security & Business Resilience': 'Security',
+  'Digital Enablement and Future Capability': 'Digital'
+};
+function renderTabs() {
+  var bar = document.getElementById('area-tabs');
+  if (!bar) return;
+  bar.innerHTML = GROUPS.map(function(g, i) {
+    var label = AREA_TAB_LABELS[g.area] || g.area;
+    return '<button class="area-tab' + (i === currentGroup ? ' active' : '') + '" onclick="gotoGroup(' + i + ')">' +
+      '<span class="area-tab-num">' + (i+1) + '</span>' + label + '</button>';
+  }).join('');
+}
+function gotoGroup(i) {
+  if (i === currentGroup) return;
+  saveComments();
+  currentGroup = i;
+  renderGroup();
+  window.scrollTo(0,0);
+}
+
+function togglePriority(rank) {
+  var row = document.getElementById('prow-'+rank);
+  var detail = document.getElementById('pdetail-'+rank);
+  if (!row || !detail) return;
+  if (detail.style.display === 'none' || !detail.style.display) {
+    detail.style.display = 'table-row';
+    row.classList.add('open');
+  } else {
+    detail.style.display = 'none';
+    row.classList.remove('open');
+  }
+}
+
+function buildScatter(priorityList) {
+  var W = 680, H = 420;
+  var ml = 60, mr = 30, mt = 30, mb = 60;
+  var pw = W - ml - mr, ph = H - mt - mb;
+  var wMin = 2.5, wMax = 5;
+  function px(iml, idx) {
+    var jitter = ((idx % 7) - 3) * 1.6;
+    return ml + ((5 - iml) / 4) * pw + jitter;
+  }
+  function py(w, idx) {
+    var jitter = (((idx * 3) % 7) - 3) * 1.6;
+    return mt + ((wMax - w) / (wMax - wMin)) * ph + jitter;
+  }
+
+  var svg = '<svg class="scatter-svg" viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">';
+  // vertical grid + IML labels
+  for (var i = 1; i <= 5; i++) {
+    var gx = ml + ((5 - i) / 4) * pw;
+    svg += '<line class="scatter-grid-line" x1="'+gx+'" y1="'+mt+'" x2="'+gx+'" y2="'+(mt+ph)+'"/>';
+    svg += '<text class="scatter-axis-label" x="'+gx+'" y="'+(mt+ph+18)+'" text-anchor="middle">IML '+i+'</text>';
+  }
+  // horizontal grid + weighting labels
+  for (var w = wMin; w <= wMax + 0.001; w += 0.5) {
+    var gy = mt + ((wMax - w) / (wMax - wMin)) * ph;
+    svg += '<line class="scatter-grid-line" x1="'+ml+'" y1="'+gy+'" x2="'+(ml+pw)+'" y2="'+gy+'"/>';
+    svg += '<text class="scatter-axis-label" x="'+(ml-10)+'" y="'+(gy+4)+'" text-anchor="end">'+w.toFixed(1)+'</text>';
+  }
+  // axes
+  svg += '<line class="scatter-axis-line" x1="'+ml+'" y1="'+(mt+ph)+'" x2="'+(ml+pw)+'" y2="'+(mt+ph)+'"/>';
+  svg += '<line class="scatter-axis-line" x1="'+ml+'" y1="'+mt+'" x2="'+ml+'" y2="'+(mt+ph)+'"/>';
+  // axis titles
+  svg += '<text class="scatter-axis-title" x="'+(ml+pw/2)+'" y="'+(H-12)+'" text-anchor="middle">IML rating (lower → higher priority)</text>';
+  svg += '<text class="scatter-axis-title" x="18" y="'+(mt+ph/2)+'" text-anchor="middle" transform="rotate(-90 18,'+(mt+ph/2)+')">Weighting</text>';
+  // quadrant hints
+  svg += '<text class="scatter-quadrant-label" x="'+(ml+pw-10)+'" y="'+(mt+14)+'" text-anchor="end">↗ Quick wins</text>';
+  svg += '<text class="scatter-quadrant-label" x="'+(ml+10)+'" y="'+(mt+ph-10)+'" text-anchor="start">Already strong ↙</text>';
+  // points
+  priorityList.forEach(function(p) {
+    var x = px(p.iml, p.idx), y = py(p.w, p.idx);
+    var cls = 'scatter-pt' + (p.f ? ' foundational' : '');
+    svg += '<circle class="'+cls+'" cx="'+x+'" cy="'+y+'" r="11"/>';
+    var lblCls = 'scatter-label' + (p.f ? ' foundational' : '');
+    svg += '<text class="'+lblCls+'" x="'+x+'" y="'+(y+3)+'" text-anchor="middle">'+(p.idx+1)+'</text>';
+  });
+  svg += '</svg>';
+  return svg;
+}
+
+function exportXLSX() {
+  if (typeof XLSX === 'undefined') {
+    alert('Excel export library failed to load. Please check your internet connection and try again.');
+    return;
+  }
+  var priorityList = QUESTIONS.map(function(q,i){
+    return { idx:i, q:q.q, area:q.area, trait:q.trait, iml:answers[i], w:q.w, f:!!q.f, score:q.w*(6-answers[i]), comments:comments[i]||'' };
+  }).sort(function(a,b){
+    if (b.score !== a.score) return b.score - a.score;
+    if (b.w !== a.w) return b.w - a.w;
+    return a.iml - b.iml;
+  });
+
+  var now = new Date();
+  var dateStr = now.toLocaleDateString('en-NZ', {day:'numeric',month:'long',year:'numeric'});
+
+  var rows = [];
+  rows.push(['IT Maturity Assessment — Prioritised Recommendations']);
+  rows.push(['Customer', customerName]);
+  rows.push(['Assessed by', staffName]);
+  rows.push(['Date', dateStr]);
+  rows.push(['Total questions', QUESTIONS.length]);
+  rows.push([]);
+  rows.push(['Rank','Q#','Question','Area','Trait','Foundational','IML','Trait Weight','Priority Score','Comments']);
+
+  priorityList.forEach(function(p, rank) {
+    rows.push([
+      rank+1,
+      p.idx+1,
+      p.q,
+      p.area,
+      p.trait,
+      p.f ? 'Yes' : '',
+      p.iml,
+      Number(p.w.toFixed(1)),
+      Number(p.score.toFixed(1)),
+      p.comments
+    ]);
+    var atMax = p.iml >= 5;
+    var nextIml = atMax ? 5 : p.iml + 1;
+    rows.push(['', '', 'Current state — IML '+p.iml+' ('+IML_LABELS[p.iml-1]+')', QUESTIONS[p.idx].a[p.iml-1]]);
+    if (!atMax) {
+      rows.push(['', '', 'Target state — IML '+nextIml+' ('+IML_LABELS[nextIml-1]+')', QUESTIONS[p.idx].a[p.iml]]);
+    } else {
+      rows.push(['', '', 'Target state', 'Already at top IML — focus on sustaining innovation']);
+    }
+    var recs = RECS[p.idx] || [];
+    recs.forEach(function(rec, ri) {
+      rows.push(['', '', 'Recommendation '+(ri+1), rec]);
+    });
+    rows.push([]);
+  });
+
+  var ws = XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols'] = [
+    {wch:6}, {wch:5}, {wch:42}, {wch:32}, {wch:50},
+    {wch:13}, {wch:6}, {wch:13}, {wch:14}, {wch:55}
+  ];
+
+  // Bold the title and header rows; freeze top header
+  var titleCell = ws['A1']; if (titleCell) titleCell.s = {font:{bold:true,sz:14}};
+  var headerRow = 7;
+  ['A','B','C','D','E','F','G','H','I','J'].forEach(function(col){
+    var ref = col + headerRow;
+    if (ws[ref]) ws[ref].s = {font:{bold:true}};
+  });
+  ws['!freeze'] = { xSplit: 0, ySplit: headerRow };
+
+  var wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Prioritised List');
+
+  var safeName = (customerName || 'IT Maturity').replace(/[\\/:*?"<>|]/g, '');
+  var fileName = safeName + ' - Assessment - ' + dateStr + '.xlsx';
+  XLSX.writeFile(wb, fileName);
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>
