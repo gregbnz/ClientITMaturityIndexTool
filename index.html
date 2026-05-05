@@ -113,7 +113,7 @@ body { font-family:'DM Sans',system-ui,sans-serif; background:var(--bg); backgro
 .trait-hd { font-size:15px; font-weight:500; text-transform:none; letter-spacing:-0.005em; color:var(--text); padding:0.9rem 0 0.75rem; border-bottom:0.5px solid var(--bdr); margin-bottom:1rem; line-height:1.4; position:relative; padding-left:14px; }
 .trait-hd::before { content:''; position:absolute; left:0; top:1.05rem; bottom:0.85rem; width:3px; background:linear-gradient(180deg,var(--accent-hi),var(--accent-lo)); border-radius:99px; box-shadow:0 0 8px -1px rgba(214,148,71,0.45); }
 .q-trait-label { display:block; font-size:11px; font-weight:500; color:var(--text2); margin-bottom:6px; line-height:1.35; }
-.section-summary { font-size:14px; line-height:1.55; color:var(--text2); max-width:640px; margin-bottom:6px; }
+.section-summary { font-size:14px; line-height:1.55; color:#C9C2B5; max-width:640px; margin-bottom:6px; }
 .section-meta { font-size:12px; color:var(--text3); }
 
 /* ── Question card: two-column layout ── */
@@ -151,28 +151,11 @@ body { font-family:'DM Sans',system-ui,sans-serif; background:var(--bg); backgro
 .priority-caret { display:inline-block; width:10px; color:var(--text3); transition:transform 0.15s; transform-origin:50% 50%; }
 .priority-row.open .priority-caret { transform:rotate(90deg); }
 
-/* Scatter plot */
-.scatter-wrap { background:var(--bg2); border-radius:var(--rlg); padding:1.25rem; margin-bottom:1rem; border:0.5px solid var(--bdr); }
-.scatter-svg { width:100%; height:auto; display:block; max-width:680px; margin:0 auto; }
-.scatter-axis-line { stroke:var(--bdr2); stroke-width:0.6; }
-.scatter-grid-line { stroke:var(--bdr); stroke-width:0.5; stroke-dasharray:2,3; }
-.scatter-axis-label { font-size:10px; fill:var(--text3); font-family:'DM Sans',sans-serif; }
-.scatter-axis-title { font-size:11px; fill:var(--text2); font-family:'DM Sans',sans-serif; font-weight:500; }
-.scatter-pt { fill:var(--bg); stroke:var(--accent); stroke-width:1.2; }
-.scatter-pt.foundational { fill:var(--accent); stroke:var(--accent-hi); }
-.scatter-label { font-size:9px; fill:var(--accent-hi); font-family:'DM Sans',sans-serif; font-weight:500; pointer-events:none; }
-.scatter-label.foundational { fill:#0F0F11; }
-.scatter-quadrant-label { font-size:10px; fill:var(--text3); font-family:'DM Sans',sans-serif; font-style:italic; }
-.scatter-legend { display:flex; gap:18px; justify-content:center; font-size:11px; color:var(--text3); margin-top:10px; flex-wrap:wrap; }
-.scatter-legend-item { display:inline-flex; align-items:center; gap:6px; }
-.scatter-legend-dot { display:inline-block; width:10px; height:10px; border-radius:50%; border:1px solid var(--accent); background:var(--bg); }
-.scatter-legend-dot.solid { background:var(--accent); border-color:var(--accent-hi); }
-
-/* Radar + Donut charts */
+/* Radar + pillar comparison charts */
 .charts-row { display:grid; grid-template-columns:1.3fr 1fr; gap:1rem; margin-bottom:1rem; }
 @media (max-width:720px) { .charts-row { grid-template-columns:1fr; } }
 .chart-wrap { background:var(--bg2); border-radius:var(--rlg); padding:1.25rem; border:0.5px solid var(--bdr); display:flex; flex-direction:column; }
-.chart-title { font-size:12px; font-weight:500; text-transform:uppercase; letter-spacing:0.06em; color:var(--text3); margin-bottom:0.75rem; }
+.chart-title { font-size:14px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:var(--text); margin-bottom:0.75rem; }
 .chart-svg { width:100%; height:auto; display:block; flex:1; }
 .radar-grid { stroke:var(--bdr); stroke-width:0.6; fill:none; }
 .radar-grid.outer { stroke:var(--bdr2); }
@@ -182,19 +165,6 @@ body { font-family:'DM Sans',system-ui,sans-serif; background:var(--bg); backgro
 .radar-label { font-size:11px; fill:var(--text); font-family:'DM Sans',sans-serif; font-weight:500; }
 .radar-tick { font-size:9px; fill:var(--text3); font-family:'DM Sans',sans-serif; }
 .radar-score { font-size:10px; fill:var(--accent-hi); font-family:'DM Sans',sans-serif; font-weight:500; }
-.donut-track { fill:none; stroke:var(--bdr); stroke-width:14; }
-.donut-seg { fill:none; stroke-width:14; transition:stroke-width 0.2s; }
-.donut-seg.s1 { stroke:#8B3A2A; }
-.donut-seg.s2 { stroke:#B97A2E; }
-.donut-seg.s3 { stroke:#D69447; }
-.donut-seg.s4 { stroke:#E9A85C; }
-.donut-seg.s5 { stroke:#3F7A78; }
-.donut-center-num { font-size:28px; font-weight:300; fill:var(--text); font-family:'DM Sans',sans-serif; text-anchor:middle; }
-.donut-center-lbl { font-size:10px; fill:var(--text3); font-family:'DM Sans',sans-serif; text-anchor:middle; letter-spacing:0.06em; text-transform:uppercase; }
-.donut-legend { display:flex; flex-direction:column; gap:5px; margin-top:10px; font-size:11px; }
-.donut-legend-item { display:flex; align-items:center; gap:8px; color:var(--text2); }
-.donut-legend-dot { width:10px; height:10px; border-radius:2px; flex-shrink:0; }
-.donut-legend-count { margin-left:auto; color:var(--text3); font-variant-numeric:tabular-nums; }
 
 .q-text { font-size:15px; line-height:1.5; }
 .iml-live { flex-shrink:0; text-align:right; }
@@ -242,6 +212,18 @@ input[type="range"]::-moz-range-thumb { width:22px; height:22px; border-radius:5
 .modal-card .ma-name { color:var(--text); }
 .modal-card .ma-count { color:var(--text3); font-variant-numeric:tabular-nums; white-space:nowrap; }
 .modal-actions { display:flex; justify-content:flex-end; gap:8px; }
+.modal-hd { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+.modal-close { background:transparent; border:none; color:var(--text2); font-size:24px; line-height:1; cursor:pointer; padding:4px 8px; }
+.modal-close:hover { color:var(--text); }
+.modal-body { font-size:13px; line-height:1.6; color:var(--text2); max-height:60vh; overflow-y:auto; padding-right:8px; margin-bottom:1rem; }
+.modal-body h2 { font-size:18px; font-weight:500; color:var(--text); margin:1.25rem 0 0.5rem; letter-spacing:-0.005em; }
+.modal-body h2:first-child { margin-top:0; }
+.modal-body h3 { font-size:14px; font-weight:500; color:var(--text); margin:1rem 0 0.4rem; }
+.modal-body p { margin:0 0 0.75rem; }
+.modal-body ul, .modal-body ol { margin:0 0 0.75rem 1.25rem; padding:0; border:none; }
+.modal-body li { display:list-item; padding:0; border:none; margin-bottom:0.25rem; color:var(--text2); }
+.modal-body code { background:var(--bg3); padding:1px 5px; border-radius:3px; font-size:12px; }
+.modal-body strong { color:var(--text); }
 
 .q-card.untouched .iml-score { color:var(--text3); font-weight:300; }
 .q-card.untouched .iml-word  { color:var(--text3); font-style:italic; }
@@ -314,8 +296,8 @@ input[type="range"]::-moz-range-thumb { width:22px; height:22px; border-radius:5
 .radar-legend-swatch { width:14px; height:10px; border-radius:2px; flex-shrink:0; }
 .radar-legend-swatch.you { background:rgba(214,148,71,0.35); border:1.2px solid var(--accent); }
 .radar-legend-swatch.industry { background:rgba(63,122,120,0.10); border:1.2px dashed var(--teal); }
-.breakdown { margin-bottom:2rem; }
-.breakdown h3 { font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:0.08em; color:var(--text3); margin-bottom:1rem; }
+.breakdown { margin-bottom:2rem; margin-top:3rem; }
+.breakdown h3 { font-size:17px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:var(--text); margin-bottom:1rem; }
 .area-row { margin-bottom:14px; }
 .area-row-top { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:5px; }
 .area-name { font-size:14px; }
@@ -329,57 +311,16 @@ input[type="range"]::-moz-range-thumb { width:22px; height:22px; border-radius:5
 .trait-tbl td:first-child { color:var(--text); }
 .trait-tbl td:last-child { text-align:right; font-variant-numeric:tabular-nums; }
 .trait-tbl tr:last-child td { border-bottom:none; }
-.res-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:2rem; padding-top:1.5rem; border-top:0.5px solid var(--bdr); }
+.res-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:2.5rem; }
 
 /* ── Print styles ── */
 @media print {
   #topbar { display:none !important; }
   .screen { display:none !important; }
-  #print-summary.active, #print-questions.active { display:block !important; }
 }
 
-/* ── Print-only pages ── */
-#print-summary, #print-questions { display:none; }
-
+/* ── Print page wrapper (used by Recommendations PDF) ── */
 .print-page { font-family:'DM Sans',system-ui,sans-serif; color:#1a1a18; max-width:800px; margin:0 auto; padding:2rem; }
-.print-page h1 { font-size:28px; font-weight:400; letter-spacing:-0.02em; margin-bottom:4px; }
-.print-page .sub { font-size:13px; color:#6b6a65; margin-bottom:2rem; padding-bottom:1.5rem; border-bottom:0.5px solid rgba(26,26,24,0.15); }
-.print-meta-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:1.5rem; }
-.print-meta-item .pm-lbl { font-size:10px; text-transform:uppercase; letter-spacing:0.06em; color:#a09f9a; margin-bottom:2px; }
-.print-meta-item .pm-val { font-size:14px; font-weight:500; }
-.print-score-block { background:#f5f4f1; border-radius:10px; padding:1.5rem; text-align:center; margin-bottom:1.5rem; }
-.print-score-block .ps-lbl { font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:#a09f9a; margin-bottom:8px; }
-.print-score-block .ps-num { font-size:60px; font-weight:300; letter-spacing:-0.03em; line-height:1; }
-.print-score-block .ps-pct { font-size:16px; color:#6b6a65; margin-top:4px; }
-.print-score-block .ps-iml { font-size:13px; color:#6b6a65; margin-top:10px; }
-.print-area-section { margin-bottom:1.5rem; }
-.print-area-section h3 { font-size:10px; font-weight:500; text-transform:uppercase; letter-spacing:0.08em; color:#a09f9a; margin-bottom:10px; }
-.print-area-row { display:flex; justify-content:space-between; align-items:center; font-size:14px; padding:6px 0; border-bottom:0.5px solid rgba(26,26,24,0.1); }
-.print-area-row:last-child { border-bottom:none; }
-.print-area-row span:last-child { color:#6b6a65; font-size:13px; }
-.print-trait-tbl { width:100%; border-collapse:collapse; font-size:13px; margin-top:8px; }
-.print-trait-tbl th { text-align:left; font-size:10px; text-transform:uppercase; letter-spacing:0.06em; color:#a09f9a; padding:0 0 6px; border-bottom:0.5px solid rgba(26,26,24,0.12); }
-.print-trait-tbl th:last-child { text-align:right; }
-.print-trait-tbl td { padding:6px 0; border-bottom:0.5px solid rgba(26,26,24,0.08); color:#6b6a65; }
-.print-trait-tbl td:first-child { color:#1a1a18; }
-.print-trait-tbl td:last-child { text-align:right; }
-.print-trait-tbl tr:last-child td { border-bottom:none; }
-
-/* Questions PDF layout */
-.pq-area { margin-bottom:2rem; page-break-before:auto; }
-.pq-area-title { font-size:18px; font-weight:400; margin-bottom:4px; }
-.pq-area-sub { font-size:12px; color:#a09f9a; margin-bottom:1rem; padding-bottom:0.75rem; border-bottom:0.5px solid rgba(26,26,24,0.15); }
-.pq-trait { margin-bottom:1.5rem; }
-.pq-trait-title { font-size:10px; font-weight:500; text-transform:uppercase; letter-spacing:0.08em; color:#a09f9a; margin-bottom:0.75rem; }
-.pq-q { border:0.5px solid rgba(26,26,24,0.12); border-radius:10px; padding:0.9rem 1.1rem; margin-bottom:0.75rem; page-break-inside:avoid; }
-.pq-q-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.75rem; gap:1rem; }
-.pq-q-text { font-size:14px; line-height:1.5; flex:1; }
-.pq-iml { text-align:right; flex-shrink:0; }
-.pq-iml-num { font-size:22px; font-weight:300; line-height:1; }
-.pq-iml-lbl { font-size:10px; color:#a09f9a; white-space:nowrap; }
-.pq-answer { background:#f5f4f1; border-radius:6px; padding:7px 10px; font-size:12px; color:#6b6a65; margin-bottom:6px; }
-.pq-comment { border-top:0.5px solid rgba(26,26,24,0.1); margin-top:8px; padding-top:8px; font-size:12px; color:#6b6a65; font-style:italic; }
-.pq-comment-lbl { font-size:10px; text-transform:uppercase; letter-spacing:0.06em; color:#a09f9a; margin-bottom:3px; font-style:normal; }
 
 /* ── Recommendations export modal ── */
 .recs-modal-card { max-width:600px; max-height:80vh; display:flex; flex-direction:column; }
@@ -456,11 +397,8 @@ input[type="range"]::-moz-range-thumb { width:22px; height:22px; border-radius:5
   body.print-summary .chart-svg { max-height:200px !important; width:auto !important; max-width:100% !important; margin:0 auto; }
   body.print-summary .radar-shape { fill:rgba(214,148,71,0.25) !important; }
   body.print-summary .radar-pt { stroke:#ffffff !important; }
-  body.print-summary .donut-track { stroke:rgba(26,26,24,0.10) !important; }
-  body.print-summary .donut-center-num { fill:#1a1a18 !important; }
   body.print-summary .radar-label { fill:#1a1a18 !important; }
-  body.print-summary .radar-tick,
-  body.print-summary .donut-center-lbl { fill:#8a8780 !important; }
+  body.print-summary .radar-tick { fill:#8a8780 !important; }
   body.print-summary .radar-score { fill:#B97A2E !important; }
   body.print-summary .breakdown { page-break-inside:avoid; }
   body.print-summary .res-hd h1 { color:#1a1a18 !important; }
@@ -474,9 +412,7 @@ input[type="range"]::-moz-range-thumb { width:22px; height:22px; border-radius:5
   }
   body.print-recs * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
   body.print-recs .page,
-  body.print-recs #topbar,
-  body.print-recs #print-summary,
-  body.print-recs #print-questions { display:none !important; }
+  body.print-recs #topbar { display:none !important; }
   body.print-recs #print-recs { display:block !important; }
 }
 
@@ -600,12 +536,12 @@ input[type="range"]::-moz-range-thumb { width:22px; height:22px; border-radius:5
 
   <!-- ═══ INTRO ═══ -->
   <div id="screen-intro" class="screen active">
-    <div class="hero">
+    <div class="hero" style="text-align:center">
       <h1>IT Maturity<br><span style="color:var(--accent)">Assessment</span></h1>
-      <p>Complete all sections to generate a scored capability report across every area and trait of your technology estate.</p>
+      <p class="tagline" style="font-size:16px;line-height:1.55;color:var(--text);margin:0 auto 10px;font-weight:500;max-width:680px">Most assessments give you a score. This one gives you a prioritised plan &mdash; benchmarked against your industry, with tailored next steps for every gap.</p>
     </div>
     <div class="stats-grid">
-      <div class="stat"><div class="stat-num">4</div><div class="stat-lbl">Areas</div></div>
+      <div class="stat"><div class="stat-num">4</div><div class="stat-lbl">Pillars</div></div>
       <div class="stat"><div class="stat-num">13</div><div class="stat-lbl">Traits</div></div>
       <div class="stat"><div class="stat-num">56</div><div class="stat-lbl">Questions</div></div>
       <div class="stat"><div class="stat-num">IML 1–5</div><div class="stat-lbl">Rating</div></div>
@@ -641,11 +577,33 @@ input[type="range"]::-moz-range-thumb { width:22px; height:22px; border-radius:5
         </select>
       </div>
     </div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center">
       <button class="btn btn-primary" onclick="startAssessment()">Begin assessment &rarr;</button>
       <button class="btn" onclick="fillSampleData()">Fill with sample data</button>
+      <button class="btn" onclick="openInstructionsModal()">Instructions</button>
+      <button class="btn" onclick="document.getElementById('import-file').click()">Import previous assessment</button>
+      <input type="file" id="import-file" accept=".xlsx,.xls" style="display:none" onchange="handleImportFile(event)">
     </div>
-    
+    <p style="text-align:center;font-size:13px;color:var(--text3);margin:14px 0 0">Estimated time to complete: <strong style="color:var(--text2)">30 minutes</strong></p>
+    <div class="notice" style="border-left:3px solid var(--accent);background:rgba(214,148,71,0.08);padding:12px 14px;margin:48px auto 0;border-radius:4px;max-width:720px;font-size:13px;line-height:1.55;color:var(--text2)">
+      <strong style="color:var(--text);display:block;margin-bottom:4px">Completing over multiple sittings</strong>
+      If you can't finish the assessment in one sitting, use the <strong>Export Answers</strong> button at the end of the assessment to save the recorded answers as an Excel file to a secure location (such as SharePoint or Google Drive). When you're ready to resume, return to this page and use the <strong>Import previous assessment</strong> button and select the same Excel file, to pick up where you left off. Your answers and report are cleared when the browser tab is closed or refreshed, so it's important to export before closing. Native save and resume is coming in a future release.
+    </div>
+
+  </div>
+
+  <!-- ═══ INSTRUCTIONS MODAL ═══ -->
+  <div id="instructions-modal" class="modal-overlay" style="display:none">
+    <div class="modal-card" style="max-width:760px">
+      <div class="modal-hd">
+        <h3>Instructions</h3>
+        <button class="modal-close" onclick="closeInstructionsModal()" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body" id="instructions-body"></div>
+      <div class="modal-actions">
+        <button class="btn" onclick="closeInstructionsModal()">Close</button>
+      </div>
+    </div>
   </div>
 
   <!-- ═══ QUESTIONS ═══ -->
@@ -667,16 +625,6 @@ input[type="range"]::-moz-range-thumb { width:22px; height:22px; border-radius:5
   </div>
 
 </div><!-- /page -->
-
-<!-- ═══ PRINT: SUMMARY PDF (hidden, shown only when printing summary) ═══ -->
-<div id="print-summary">
-  <div class="print-page" id="print-summary-content"></div>
-</div>
-
-<!-- ═══ PRINT: QUESTIONS PDF (hidden, shown only when printing questions) ═══ -->
-<div id="print-questions">
-  <div class="print-page" id="print-questions-content"></div>
-</div>
 
 <!-- ═══ PRINT: RECOMMENDATIONS PDF (hidden, shown only when printing recs) ═══ -->
 <div id="print-recs">
@@ -1093,6 +1041,24 @@ var AREAS = (function() {
   return out;
 })();
 
+var AREA_SHORT = {
+  'Strategy, Governance and Investment': 'Strategy',
+  'Operations, Platform and Service Delivery': 'Operations',
+  'Security & Business Resilience': 'Security',
+  'Digital Enablement and Future Capability': 'Digital'
+};
+
+var PILLAR_RATIONALES = {
+  'Strategy, Governance and Investment':
+    'Strategy, governance and investment set the direction for technology and ensure spend is aligned to business outcomes. Advancing this pillar improves prioritisation, accountability and return on IT investment. Without it, technology decisions become reactive, duplicated or disconnected from business value, leading to wasted spend, delayed initiatives and a loss of executive confidence in IT.',
+  'Operations, Platform and Service Delivery':
+    'Operations, platform and service delivery underpin the day-to-day reliability and performance of the business. Maturing this pillar reduces incidents, accelerates delivery and creates a stable foundation for change. If left immature, the organisation faces frequent outages, slow support response, poor end-user experience and a growing backlog of unresolved technical debt.',
+  'Security & Business Resilience':
+    'Security and business resilience protect the organisation from cyber threats, data loss and disruption. Advancing this pillar reduces breach risk, ensures regulatory compliance and shortens recovery time when incidents occur. Failing to mature here exposes the business to financial loss, reputational damage, legal action and prolonged downtime that can threaten the organisation’s viability.',
+  'Digital Enablement and Future Capability':
+    'Digital enablement and future capability turn technology into competitive advantage through automation, data and modern ways of working. Advancing this pillar drives productivity, customer experience and the ability to adopt AI and new digital business models. Without progress here the organisation falls behind competitors, struggles to attract talent and misses opportunities to grow revenue or reduce cost through innovation.'
+};
+
 var GROUPS = AREAS.map(function(area) {
   var qs = QUESTIONS.map(function(q,i){return Object.assign({},q,{idx:i});}).filter(function(q){return q.area===area;});
   var traitSeen = {}, traits = [];
@@ -1218,6 +1184,154 @@ function startAssessment() {
   window.scrollTo(0,0);
 }
 
+// \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Instructions modal \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+var INSTRUCTIONS_HTML =
+  '<h2>What this tool does</h2>' +
+  '<p>This assessment helps you measure an organisation\'s IT maturity across <strong>4 pillars</strong>, <strong>13 traits</strong>, and <strong>56 questions</strong>, each scored on a 1\u20135 IT Maturity Level (IML) scale that runs from <em>Nascent</em> to <em>Innovating</em>.</p>' +
+  '<p>You\'ll work through the 56 questions one section at a time. Each question has a 1\u20135 slider with a short description of what each level looks like, and a space for any notes you want to capture. The <strong>industry</strong> you pick at the start is used as a benchmark, so every score on the final report sits alongside the average for that industry. Allow around <strong>30 minutes</strong> to complete the full assessment.</p>' +
+  '<h2>How to use</h2>' +
+  '<ol>' +
+    '<li>Enter the customer name, your name, and pick the <strong>industry</strong> for benchmarking, then click <strong>Begin assessment</strong>.</li>' +
+    '<li>Work through each section, rating every question. Add notes where useful.</li>' +
+    '<li>When all 56 questions are rated, click <strong>View results</strong> to see the scored report.</li>' +
+  '</ol>' +
+  '<h2>Sample data</h2>' +
+  '<p>Click <strong>Fill with sample data</strong> on the start page to skip the questionnaire and jump straight to a fully populated results page \u2014 handy for demos, walkthroughs, or just exploring what the report looks like.</p>' +
+  '<h2>Pause and resume across sittings</h2>' +
+  '<p>The tool doesn\'t yet save progress automatically, and your answers are cleared when the browser tab is closed or refreshed. If you need to stop partway through:</p>' +
+  '<ol>' +
+    '<li>Complete the assessment up to the point you need to stop, then either keep going to results or use sample data to get to the results page.</li>' +
+    '<li>Click <strong>Export Answers</strong> on the results page to save your ratings and notes as an Excel file. Save it somewhere secure (such as SharePoint or Google Drive).</li>' +
+    '<li>When you\'re ready to resume, return to the start page, click <strong>Import previous assessment</strong>, and pick that same Excel file. Your ratings and notes are loaded back in and you can continue from the first pillar, reviewing and adjusting as needed.</li>' +
+  '</ol>' +
+  '<p>Native save and resume is coming in a future release.</p>' +
+  '<h2>What\'s on the results page</h2>' +
+  '<ul>' +
+    '<li>Overall IML score with industry comparison</li>' +
+    '<li><strong>Maturity by pillar</strong> radar chart with industry overlay</li>' +
+    '<li><strong>Pillar comparison</strong> bar chart vs industry</li>' +
+    '<li><strong>IML by pillar</strong> bars with industry markers</li>' +
+    '<li><strong>IML by trait</strong> grouped under each pillar</li>' +
+    '<li><strong>Prioritised recommendations \u2014 Top 10</strong>: the top 10 questions to focus on, each expandable to show the current state, target state, and 5 tailored recommendations to advance to the next IML level</li>' +
+  '</ul>' +
+  '<h2>Exports</h2>' +
+  '<ul>' +
+    '<li><strong>Export Summary</strong> \u2014 a polished PDF report with a cover page and the full on-screen results, ready to share with the customer.</li>' +
+    '<li><strong>Export Answers</strong> \u2014 an Excel file of every question with your ratings, weights, and notes. Use this to pause and resume later by re-importing it from the start page.</li>' +
+    '<li><strong>Export Recommendations</strong> \u2014 a PDF with a cover page and detailed recommendations. A picker lets you choose which priority questions to include, with shortcuts for top 5, top 10, all, or none.</li>' +
+  '</ul>' +
+  '<p>Each exported file is named after the customer and the date, so they\'re easy to file away.</p>' +
+  '<h2>Requirements</h2>' +
+  '<ul>' +
+    '<li>A modern web browser (Chrome, Edge, Safari, or Firefox).</li>' +
+    '<li>Internet access the first time you open the page. After that, you can complete the assessment offline.</li>' +
+  '</ul>';
+
+function openInstructionsModal() {
+  document.getElementById('instructions-body').innerHTML = INSTRUCTIONS_HTML;
+  document.getElementById('instructions-modal').style.display = 'block';
+}
+function closeInstructionsModal() {
+  document.getElementById('instructions-modal').style.display = 'none';
+}
+
+// \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Import previous assessment (XLSX) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+function handleImportFile(event) {
+  var file = event.target.files && event.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var data = new Uint8Array(e.target.result);
+      var wb = XLSX.read(data, { type:'array' });
+      var sheetName = wb.SheetNames[0];
+      var ws = wb.Sheets[sheetName];
+      var rows = XLSX.utils.sheet_to_json(ws, { header:1, defval:'' });
+      if (!rows.length) throw new Error('Empty workbook');
+
+      // Pull metadata from the leading rows (label in col A, value in col B)
+      var importedCustomer = '', importedStaff = '', importedIndustry = '';
+      var headerRowIdx = -1;
+      for (var r = 0; r < rows.length; r++) {
+        var row = rows[r] || [];
+        var lbl = String(row[0] || '').trim().toLowerCase();
+        if (lbl === 'customer')          importedCustomer = String(row[1] || '').trim();
+        else if (lbl === 'assessed by')  importedStaff    = String(row[1] || '').trim();
+        else if (lbl === 'industry')     importedIndustry = String(row[1] || '').trim();
+        // Detect the data table header row
+        var lower = row.map(function(c){ return String(c).trim().toLowerCase(); });
+        if (lower.indexOf('q#') !== -1 && lower.indexOf('iml') !== -1) {
+          headerRowIdx = r;
+          break;
+        }
+      }
+      if (headerRowIdx === -1) {
+        throw new Error('This doesn\'t look like an Export Answers file (missing Q# / IML columns).');
+      }
+      var header  = rows[headerRowIdx].map(function(h){ return String(h).trim().toLowerCase(); });
+      var iQ       = header.indexOf('q#');
+      var iIml     = header.indexOf('iml');
+      var iComment = header.indexOf('comments');
+
+      var importedAnswers  = answers.slice();
+      var importedComments = comments.slice();
+      var loaded = 0;
+      for (var r = headerRowIdx + 1; r < rows.length; r++) {
+        var row = rows[r];
+        if (!row || row.length === 0) continue;
+        var qLabel = String(row[iQ] || '').replace(/^Q/i,'').trim();
+        var qIdx = parseInt(qLabel, 10) - 1;
+        var iml  = parseInt(row[iIml], 10);
+        if (qIdx >= 0 && qIdx < QUESTIONS.length && iml >= 1 && iml <= 5) {
+          importedAnswers[qIdx] = iml;
+          if (iComment !== -1) importedComments[qIdx] = String(row[iComment] || '');
+          loaded++;
+        }
+      }
+      if (loaded === 0) throw new Error('No valid IML ratings found in the file.');
+
+      // Apply to global state
+      answers = importedAnswers;
+      comments = importedComments;
+      if (importedCustomer) {
+        customerName = importedCustomer;
+        document.getElementById('inp-customer').value = customerName;
+      }
+      if (importedStaff) {
+        staffName = importedStaff;
+        document.getElementById('inp-staff').value = staffName;
+      }
+      if (importedIndustry) {
+        industry = importedIndustry;
+        var sel = document.getElementById('inp-industry');
+        for (var i = 0; i < sel.options.length; i++) {
+          if (sel.options[i].value === importedIndustry || sel.options[i].text === importedIndustry) {
+            sel.selectedIndex = i; break;
+          }
+        }
+      }
+
+      // Validate we have what we need to enter the assessment
+      if (!customerName) customerName = 'Imported assessment';
+      if (!staffName) staffName = 'Imported';
+      if (!industry) industry = '';
+
+      currentGroup = 0;
+      setProgress(0);
+      updateTopbar(customerName + ' \u2014 ' + staffName);
+      renderGroup();
+      show('screen-questions');
+      window.scrollTo(0,0);
+      event.target.value = ''; // allow re-import
+      setTimeout(function(){ alert('Imported ' + loaded + ' answers. Review and adjust as needed, then click View results.'); }, 100);
+    } catch (err) {
+      alert('Import failed: ' + (err.message || err));
+      event.target.value = '';
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
 // ── render a section ──
 function renderGroup() {
   var g   = GROUPS[currentGroup];
@@ -1236,13 +1350,6 @@ function renderGroup() {
   container.innerHTML = '';
 
   g.traits.forEach(function(tg) {
-    var tDiv = document.createElement('div');
-    tDiv.className = 'trait-group';
-    var tHd = document.createElement('div');
-    tHd.className = 'trait-hd';
-    tHd.textContent = tg.trait;
-    tDiv.appendChild(tHd);
-
     tg.questions.forEach(function(q) {
       var val      = answers[q.idx];
       var touched  = val !== null;
@@ -1259,8 +1366,6 @@ function renderGroup() {
           '<div class="q-left">' +
             '<div class="q-num-row">' +
               '<span class="q-num">Q' + (q.idx+1) + '</span>' +
-              '<span class="q-weight" title="Priority weighting (1–5, higher = focus first)">Weighting <strong>' + q.w.toFixed(1) + '</strong></span>' +
-              (q.f ? '<span class="q-foundational" title="Foundational capability">Foundational</span>' : '') +
             '</div>' +
             '<div class="q-text">' + escHtml(q.q) + '</div>' +
           '</div>' +
@@ -1281,9 +1386,8 @@ function renderGroup() {
             '<textarea class="comment-input" id="cmt-' + q.idx + '" placeholder="Add context or notes\u2026" oninput="onComment(' + q.idx + ',this.value)">' + escHtml(cmt) + '</textarea>' +
           '</div>' +
         '</div>';
-      tDiv.appendChild(card);
+      container.appendChild(card);
     });
-    container.appendChild(tDiv);
   });
 
   document.getElementById('nav-info').textContent = 'Section ' + (currentGroup+1) + ' of ' + GROUPS.length;
@@ -1379,7 +1483,7 @@ function showResults() {
   var baseline = industry ? getIndustryBaseline(industry) : null;
 
   var radarSvg  = buildRadar(areaStats, baseline);
-  var donutData = buildDonut(answers);
+  var areaCmpData = buildAreaCmpChart(areaStats, baseline);
 
   var now     = new Date();
   var dateStr = now.toLocaleDateString('en-NZ',{day:'numeric',month:'long',year:'numeric'});
@@ -1400,56 +1504,63 @@ function showResults() {
         ' \u00b7 <span class="'+deltaCls(d)+'">'+deltaArrow(d)+' '+deltaStr(d)+'</span></div>';
       marker = '<div class="industry-marker" style="left:'+indPct+'%" title="Industry IML '+indIml.toFixed(1)+'"></div>';
     }
+    var rationale = PILLAR_RATIONALES[a.area] || '';
     return '<div class="area-row">' +
       '<div class="area-row-top"><span class="area-name">'+a.area+'</span>' +
-      '<span class="area-sc">IML '+custIml.toFixed(1)+' \u00a0\u00b7\u00a0 '+a.score+' / '+a.max+'</span></div>' +
+      '<span class="area-sc">IML '+custIml.toFixed(1)+'</span></div>' +
       '<div class="bar-bg area-row-bar-wrap"><div class="bar-fill" data-pct="'+a.pct+'"></div>'+marker+'</div>' +
       cmpHtml +
+      (rationale ? '<p class="pillar-rationale" style="font-size:12px;line-height:1.55;color:var(--text2);margin:8px 0 0;max-width:680px;text-align:left">'+escHtml(rationale)+'</p>' : '') +
     '</div>';
   }).join('');
 
-  var traitRows = traitStats.map(function(t){
-    var indCol = '';
-    if (baseline) {
-      var indIml = baseline.traits[t.trait];
-      var d = parseFloat(t.avg) - indIml;
-      indCol = '<td class="cmp-cell" style="padding-right:22px">IML '+indIml.toFixed(1)+
-        ' <span class="'+deltaCls(d)+'" style="font-size:11px;margin-left:4px">'+deltaArrow(d)+' '+deltaStr(d)+'</span></td>';
-    }
-    return '<tr><td>'+escHtml(t.trait)+'</td>' +
-      '<td style="color:var(--text3)">'+escHtml(t.area)+'</td>' +
-      '<td style="color:var(--text3);white-space:nowrap">IML '+t.avg+'</td>' +
-      indCol +
-      '<td style="white-space:nowrap">'+t.score+' / '+t.max+'</td></tr>';
-  }).join('');
+  function buildTraitTable(area) {
+    var rows = traitStats.filter(function(t){return t.area===area;}).map(function(t){
+      var indCol = '';
+      if (baseline) {
+        var indIml = baseline.traits[t.trait];
+        var d = parseFloat(t.avg) - indIml;
+        indCol = '<td class="cmp-cell" style="padding-right:22px;text-align:left">IML '+indIml.toFixed(1)+
+          ' <span class="'+deltaCls(d)+'" style="font-size:11px;margin-left:4px">'+deltaArrow(d)+' '+deltaStr(d)+'</span></td>';
+      }
+      return '<tr><td style="text-align:left">'+escHtml(t.trait)+'</td>' +
+        '<td style="color:var(--text3);white-space:nowrap;text-align:left">IML '+t.avg+'</td>' +
+        indCol +
+      '</tr>';
+    }).join('');
+    return '<div class="trait-area-block" style="margin-bottom:1.25rem">' +
+      '<table class="trait-tbl"><thead><tr><th style="text-align:left;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent)">'+escHtml(AREA_SHORT[area]||area)+'</th><th style="text-align:left">Your IML</th>'+(baseline?'<th style="padding-right:22px;text-align:left">Industry IML</th>':'')+'</tr></thead>' +
+      '<tbody>'+rows+'</tbody></table>' +
+    '</div>';
+  }
+  var traitSections = AREAS.map(buildTraitTable).join('');
 
-  var priorityRows = priorityList.map(function(p, rank){
+  var priorityTop = priorityList.slice(0, 10);
+  var priorityRows = priorityTop.map(function(p, rank){
     var atMax = p.iml >= 5;
     var nextIml = atMax ? 5 : p.iml + 1;
     var currentTxt = QUESTIONS[p.idx].a[p.iml-1];
     var nextTxt = atMax ? '' : QUESTIONS[p.idx].a[p.iml];
     var recs = RECS[p.idx] || [];
     var recsHtml = recs.map(function(r){
-      return '<li><div class="rec-text">'+escHtml(r.r)+'</div></li>';
+      return '<li style="text-align:left"><div class="rec-text" style="text-align:left">'+escHtml(r.r)+'</div></li>';
     }).join('');
     return '<tr class="priority-row" onclick="togglePriority('+rank+')" id="prow-'+rank+'">' +
-      '<td style="color:var(--text3);width:56px;font-variant-numeric:tabular-nums;white-space:nowrap"><span class="priority-caret">\u25B6</span> Q'+(p.idx+1)+'</td>' +
-      '<td>'+escHtml(p.q)+(p.f?' <span class="q-foundational" style="font-size:9px;padding:1px 7px;margin-left:4px;vertical-align:middle">Foundational</span>':'')+'</td>' +
-      '<td style="color:var(--text3);white-space:nowrap">'+escHtml(AREA_SHORT[p.area]||p.area)+'</td>' +
-      '<td style="text-align:right;font-variant-numeric:tabular-nums">'+p.iml+'</td>' +
-      '<td style="text-align:right;padding-left:28px;font-variant-numeric:tabular-nums">'+p.w.toFixed(1)+'</td>' +
+      '<td style="color:var(--text3);width:56px;font-variant-numeric:tabular-nums;white-space:nowrap;text-align:left"><span class="priority-caret">\u25B6</span> Q'+(p.idx+1)+'</td>' +
+      '<td style="text-align:left">'+escHtml(p.q)+(p.f?' <span class="q-foundational" style="font-size:9px;padding:1px 7px;margin-left:4px;vertical-align:middle">Foundational</span>':'')+'</td>' +
+      '<td style="color:var(--text3);white-space:nowrap;text-align:left">'+escHtml(AREA_SHORT[p.area]||p.area)+'</td>' +
+      '<td style="text-align:left;font-variant-numeric:tabular-nums">'+p.iml+'</td>' +
+      '<td style="text-align:left;padding-left:28px;font-variant-numeric:tabular-nums">'+p.w.toFixed(1)+'</td>' +
     '</tr>' +
     '<tr class="priority-detail-row" id="pdetail-'+rank+'" style="display:none">' +
-      '<td colspan="5">' +
-        '<div class="priority-detail">' +
-          '<h4>Current state: IML '+p.iml+' ('+IML_LABELS[p.iml-1]+')</h4>' +
-          '<div class="pd-state">'+escHtml(currentTxt)+'</div>' +
-          '<h4>Top 5 recommendations to advance</h4>' +
-          '<ol>'+recsHtml+'</ol>' +
+      '<td colspan="5" style="text-align:left">' +
+        '<div class="priority-detail" style="text-align:left">' +
+          '<h4 style="text-align:left">Current state: IML '+p.iml+' \u2014 '+IML_LABELS[p.iml-1]+' \u2014 '+escHtml(currentTxt)+'</h4>' +
+          '<h4 style="text-align:left;color:#fff;text-decoration:underline;text-underline-offset:3px">Top 5 recommendations to advance</h4>' +
+          '<ol style="text-align:left">'+recsHtml+'</ol>' +
           (atMax
-            ? '<h4>Already at top IML \u2014 focus on sustaining innovation</h4>'
-            : '<h4>Target state: IML '+nextIml+' ('+IML_LABELS[nextIml-1]+')</h4>' +
-              '<div class="pd-state">'+escHtml(nextTxt)+'</div>') +
+            ? '<h4 style="text-align:left">Already at top IML \u2014 focus on sustaining innovation</h4>'
+            : '<h4 style="text-align:left">Target state: IML '+nextIml+' \u2014 '+IML_LABELS[nextIml-1]+' \u2014 '+escHtml(nextTxt)+'</h4>') +
         '</div>' +
       '</td>' +
     '</tr>';
@@ -1471,10 +1582,9 @@ function showResults() {
       '<div class="meta-card"><div class="lbl">Questions</div><div class="val">'+QUESTIONS.length+'</div></div>' +
     '</div>' +
     '<div class="score-display">' +
-      '<div class="score-lbl">Total score</div>' +
-      '<div><span class="score-big">'+total+'</span><span class="score-denom"> / '+maxTotal+'</span></div>' +
-      '<div class="score-pct">'+pct+'%</div>' +
-      '<div class="iml-chip">Overall IML '+avgIML+' \u2014 '+IML_LABELS[imlLevel-1]+'</div>' +
+      '<div class="score-lbl">Overall IML</div>' +
+      '<div><span class="score-big">'+avgIML+'</span><span class="score-denom"> / 5</span></div>' +
+      '<div class="iml-chip">'+IML_LABELS[imlLevel-1]+'</div>' +
       (baseline ? (function(){
         var y = parseFloat(avgIML), ind = baseline.overall, d = y - ind;
         return '<div class="score-cmp">' +
@@ -1485,17 +1595,16 @@ function showResults() {
       })() : '') +
     '</div>' +
     '<div class="charts-row">' +
-      '<div class="chart-wrap"><div class="chart-title">Maturity by area</div>'+radarSvg+'</div>' +
-      '<div class="chart-wrap"><div class="chart-title">Rating distribution</div>'+donutData.svg+donutData.legend+'</div>' +
+      '<div class="chart-wrap"><div class="chart-title">Maturity by pillar</div>'+radarSvg+'</div>' +
+      '<div class="chart-wrap"><div class="chart-title">Pillar comparison vs industry</div>'+areaCmpData.svg+areaCmpData.legend+'</div>' +
     '</div>' +
-    '<div class="breakdown"><h3>Score by area</h3>'+areaRows+'</div>' +
-    '<div class="breakdown"><h3>Score by trait</h3>' +
-      '<div style="overflow-x:auto"><table class="trait-tbl"><thead><tr><th>Trait</th><th>Area</th><th>Your IML</th>'+(baseline?'<th style="padding-right:22px">Industry IML</th>':'')+'<th>Score</th></tr></thead>' +
-      '<tbody>'+traitRows+'</tbody></table></div>' +
+    '<div class="breakdown"><h3>IML by pillar</h3>'+areaRows+'</div>' +
+    '<div class="breakdown"><h3>IML by trait</h3>' +
+      traitSections +
     '</div>' +
-    '<div class="breakdown" id="priority-section"><h3>Priority focus order</h3>' +
-      '<p style="font-size:12px;color:var(--text3);margin-bottom:1rem;line-height:1.5;max-width:560px">Click any row to expand the top 5 recommendations to advance to the next IML level.</p>' +
-      '<div style="overflow-x:auto"><table class="trait-tbl"><thead><tr><th style="width:56px">Q#</th><th>Question</th><th>Area</th><th style="text-align:right">IML</th><th style="text-align:right;padding-left:28px">Weight</th></tr></thead>' +
+    '<div class="breakdown" id="priority-section"><h3>Prioritised recommendations — Top 10</h3>' +
+      '<p style="font-size:12px;color:var(--text3);margin-bottom:1rem;line-height:1.5;max-width:680px;text-align:left">Click any row to expand the top 5 recommendations to advance to the next IML level. Use the <strong>Export Recommendations</strong> button at the bottom to view the full list, including more detail on each recommendation.</p>' +
+      '<div style="overflow-x:auto"><table class="trait-tbl"><thead><tr><th style="width:56px;text-align:left">Q#</th><th style="text-align:left">Question</th><th style="text-align:left">Pillar</th><th style="text-align:left">IML</th><th style="text-align:left;padding-left:28px">Weight</th></tr></thead>' +
       '<tbody>'+priorityRows+'</tbody></table></div>' +
     '</div>' +
     '<div class="res-actions">' +
@@ -1565,7 +1674,7 @@ function printSummary() {
       '<div class="ps-pct">'+pct+'%</div>' +
       '<div class="ps-iml">Overall IML '+avgIML+' \u2014 '+IML_LABELS[imlLevel-1]+'</div>' +
     '</div>' +
-    '<div class="print-area-section"><h3>Score by area</h3>'+areaRowsHtml+'</div>' +
+    '<div class="print-area-section"><h3>Score by pillar</h3>'+areaRowsHtml+'</div>' +
     '<div class="print-area-section"><h3>Score by trait</h3>' +
       '<table class="print-trait-tbl"><thead><tr><th>Trait</th><th>Area</th><th>Avg IML</th><th>Score</th></tr></thead>' +
       '<tbody>'+traitRowsHtml+'</tbody></table>' +
@@ -1723,8 +1832,7 @@ function openRecsExportModal() {
     html += '<label>' +
       '<input type="checkbox" data-rank="'+rank+'"'+checked+' onchange="updateRecsModalCount()">' +
       '<span class="ml-rank">#'+(rank+1)+'</span>' +
-      '<span class="ml-q"><span style="color:var(--text3);margin-right:6px">Q'+(p.idx+1)+'</span>'+escHtml(p.q)+'</span>' +
-      '<span class="ml-iml">IML '+p.iml+'</span>' +
+      '<span class="ml-q">'+escHtml(p.q)+'</span>' +
     '</label>';
   });
   listEl.innerHTML = html;
@@ -1790,16 +1898,15 @@ function renderRecsPdf(selectedRanks) {
     html += '<div class="pr-q">' +
       '<div class="pr-q-hd">' +
         '<div class="pr-q-text">' +
-          '<div class="pr-q-num">Priority #'+(rank+1)+' · Q'+(p.idx+1)+(p.f?' · Foundational':'')+'</div>' +
+          '<div class="pr-q-num">Priority #'+(rank+1)+(p.f?' · Foundational':'')+'</div>' +
           '<div class="pr-q-q">'+escHtml(p.q)+'</div>' +
-          '<div class="pr-q-meta">'+escHtml(p.area)+' · '+escHtml(p.trait)+' · Weight '+p.w.toFixed(1)+'</div>' +
         '</div>' +
         '<div class="pr-q-iml"><div class="pr-q-iml-num">'+p.iml+'</div><div class="pr-q-iml-lbl">'+IML_LABELS[p.iml-1]+'</div></div>' +
       '</div>' +
-      '<div class="pr-state"><div class="pr-state-lbl">Current state — IML '+p.iml+' ('+IML_LABELS[p.iml-1]+')</div>'+escHtml(currentTxt)+'</div>' +
+      '<div class="pr-state"><div class="pr-state-lbl">Current state</div>IML '+p.iml+' — '+IML_LABELS[p.iml-1]+' — '+escHtml(currentTxt)+'</div>' +
       (atMax
         ? '<div class="pr-state"><div class="pr-state-lbl">Already at top IML</div>Focus on sustaining and extending innovation in this area.</div>'
-        : '<div class="pr-state"><div class="pr-state-lbl">Target state — IML '+nextIml+' ('+IML_LABELS[nextIml-1]+')</div>'+escHtml(nextTxt)+'</div>') +
+        : '<div class="pr-state"><div class="pr-state-lbl">Target state</div>IML '+nextIml+' — '+IML_LABELS[nextIml-1]+' — '+escHtml(nextTxt)+'</div>') +
       '<div class="pr-recs-hd">Top 5 recommendations to advance</div>';
 
     recs.forEach(function(r, i){
@@ -1825,7 +1932,7 @@ function renderRecsPdf(selectedRanks) {
 // Services & Banking averages — IT Org (3.7 vs 3.5), End-User support
 // (3.6 vs 3.5), and Cyber (4.2 vs 4.0) — so the comparison view shows
 // both gaps and strengths.
-var SAMPLE_ANSWERS = [3, 2, 3, 1, 2, 2, 3, 2, 4, 2, 3, 4, 1, 3, 2, 4, 3, 4, 3, 4, 2, 3, 1, 4, 4, 3, 4, 3, 3, 1, 1, 2, 4, 2, 4, 5, 4, 4, 4, 4, 2, 3, 2, 1, 2, 1, 3, 2, 1, 1, 2, 3, 1, 4, 2, 1];
+var SAMPLE_ANSWERS = [3, 2, 3, 1, 2, 2, 3, 2, 4, 2, 3, 4, 1, 3, 2, 4, 3, 4, 3, 4, 2, 3, 1, 4, 4, 3, 4, 3, 3, 1, 4, 4, 5, 4, 5, 5, 4, 4, 4, 4, 2, 3, 2, 1, 2, 1, 3, 2, 1, 1, 2, 3, 1, 4, 2, 1];
 function fillSampleData() {
   customerName = 'Sample Org';
   staffName    = 'Sample User';
@@ -1895,7 +2002,7 @@ function showIncomplete() {
   var listEl = document.getElementById('incomplete-list');
   listEl.innerHTML = AREAS.filter(function(a){return perArea[a]>0;}).map(function(a){
     var n = perArea[a];
-    return '<li><span class="ma-name">'+escHtml(a)+'</span>' +
+    return '<li><span class="ma-name">'+escHtml(AREA_SHORT[a]||a)+'</span>' +
            '<span class="ma-count">'+n+' unrated</span></li>';
   }).join('');
   document.getElementById('incomplete-modal').style.display = 'block';
@@ -2003,6 +2110,62 @@ function buildRadar(areaStats, industryBaseline) {
     '</div>';
   }
   return svg;
+}
+
+function buildAreaCmpChart(areaStats, industryBaseline) {
+  var SHORT = {
+    'Strategy, Governance and Investment': 'Strategy',
+    'Operations, Platform and Service Delivery': 'Operations',
+    'Security & Business Resilience': 'Security',
+    'Digital Enablement and Future Capability': 'Digital'
+  };
+  var W = 360, H = 320;
+  var ml = 70, mr = 18, mt = 24, mb = 36;
+  var pw = W - ml - mr, ph = H - mt - mb;
+  var n = areaStats.length;
+  var rowH = ph / n;
+  var barH = Math.min(18, rowH * 0.34);
+  var gap  = 6;
+  var maxIml = 5;
+
+  var svg = '<svg class="chart-svg" viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">';
+  for (var k = 1; k <= 5; k++) {
+    var gx = ml + (k/maxIml) * pw;
+    svg += '<line x1="'+gx+'" y1="'+mt+'" x2="'+gx+'" y2="'+(mt+ph)+'" stroke="rgba(163,155,142,0.18)" stroke-width="0.5"/>';
+    svg += '<text x="'+gx+'" y="'+(mt+ph+16)+'" text-anchor="middle" font-size="9" fill="#a09f9a" font-family="DM Sans,sans-serif">'+k+'</text>';
+  }
+  svg += '<line x1="'+ml+'" y1="'+mt+'" x2="'+ml+'" y2="'+(mt+ph)+'" stroke="rgba(163,155,142,0.35)" stroke-width="0.5"/>';
+
+  for (var i = 0; i < n; i++) {
+    var rowY = mt + i * rowH + rowH/2;
+    var label = SHORT[areaStats[i].area] || areaStats[i].area;
+    svg += '<text x="'+(ml-10)+'" y="'+(rowY+3)+'" text-anchor="end" font-size="11" fill="#F4EFE6" font-family="DM Sans,sans-serif">'+label+'</text>';
+
+    var youIml = areaStats[i].score / (areaStats[i].max/5);
+    var indIml = industryBaseline ? industryBaseline.areas[areaStats[i].area] : null;
+
+    var youW = (youIml/maxIml) * pw;
+    var youY = rowY - barH - gap/2;
+    svg += '<rect x="'+ml+'" y="'+youY+'" width="'+youW.toFixed(1)+'" height="'+barH+'" rx="2" fill="#D69447"/>';
+    svg += '<text x="'+(ml+youW+5)+'" y="'+(youY+barH-4)+'" font-size="10" fill="#F4EFE6" font-family="DM Sans,sans-serif" font-variant-numeric="tabular-nums">'+youIml.toFixed(1)+'</text>';
+
+    if (indIml !== null) {
+      var indW = (indIml/maxIml) * pw;
+      var indY = rowY + gap/2;
+      svg += '<rect x="'+ml+'" y="'+indY+'" width="'+indW.toFixed(1)+'" height="'+barH+'" rx="2" fill="#3F7A78"/>';
+      svg += '<text x="'+(ml+indW+5)+'" y="'+(indY+barH-4)+'" font-size="10" fill="#F4EFE6" font-family="DM Sans,sans-serif" font-variant-numeric="tabular-nums">'+indIml.toFixed(1)+'</text>';
+    }
+  }
+  svg += '</svg>';
+
+  var legend = '';
+  if (industryBaseline) {
+    legend = '<div class="radar-legend">' +
+      '<span class="radar-legend-item"><span class="radar-legend-swatch you"></span>Your organisation</span>' +
+      '<span class="radar-legend-item"><span class="radar-legend-swatch industry"></span>'+escHtml(industryBaseline.name)+' avg</span>' +
+    '</div>';
+  }
+  return { svg: svg, legend: legend };
 }
 
 function buildDonut(answers) {
