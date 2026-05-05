@@ -1430,9 +1430,7 @@ function showResults() {
     var nextTxt = atMax ? '' : QUESTIONS[p.idx].a[p.iml];
     var recs = RECS[p.idx] || [];
     var recsHtml = recs.map(function(r){
-      return '<li><div class="rec-text">'+escHtml(r.r)+'</div>' +
-             '<div class="rec-benefit"><span class="rec-lbl">Benefit:</span> '+escHtml(r.b)+'</div>' +
-             '<div class="rec-impl"><span class="rec-lbl">Implementation:</span> '+escHtml(r.i)+'</div></li>';
+      return '<li><div class="rec-text">'+escHtml(r.r)+'</div></li>';
     }).join('');
     return '<tr class="priority-row" onclick="togglePriority('+rank+')" id="prow-'+rank+'">' +
       '<td style="color:var(--text3);width:56px;font-variant-numeric:tabular-nums;white-space:nowrap"><span class="priority-caret">\u25B6</span> Q'+(p.idx+1)+'</td>' +
