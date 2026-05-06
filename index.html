@@ -615,6 +615,9 @@ input[type="range"]::-moz-range-thumb { width:22px; height:22px; border-radius:5
       <span class="nav-info" id="nav-info"></span>
       <button class="btn btn-primary" id="btn-next" onclick="nextGroup()">Next &rarr;</button>
     </div>
+    <div style="display:flex;justify-content:center;margin-top:18px">
+      <button class="btn" onclick="exportXLSX()" title="Save your progress as an Excel file. Re-import it from the start screen to resume.">Export progress &mdash; resume later</button>
+    </div>
   </div>
 
   <!-- ═══ RESULTS ═══ -->
@@ -3237,12 +3240,23 @@ function exportXLSX() {
     alert('Excel export library failed to load. Please check your internet connection and try again.');
     return;
   }
+  var answeredCount = answers.filter(function(a){ return a !== null && a !== undefined; }).length;
   var priorityList = QUESTIONS.map(function(q,i){
-    return { idx:i, q:q.q, area:q.area, trait:q.trait, iml:answers[i], w:q.w, f:!!q.f, score:q.w*(6-answers[i]), comments:comments[i]||'' };
+    var a = answers[i];
+    var answered = (a !== null && a !== undefined);
+    return {
+      idx:i, q:q.q, area:q.area, trait:q.trait,
+      iml: answered ? a : null,
+      w:q.w, f:!!q.f,
+      answered: answered,
+      score: answered ? (q.w * (6 - a)) : -1,
+      comments: comments[i] || ''
+    };
   }).sort(function(a,b){
+    if (a.answered !== b.answered) return a.answered ? -1 : 1;
     if (b.score !== a.score) return b.score - a.score;
     if (b.w !== a.w) return b.w - a.w;
-    return a.iml - b.iml;
+    return (a.iml || 0) - (b.iml || 0);
   });
 
   var now = new Date();
@@ -3255,18 +3269,19 @@ function exportXLSX() {
   rows.push(['Industry', industry || '—']);
   rows.push(['Date', dateStr]);
   rows.push(['Total questions', QUESTIONS.length]);
+  rows.push(['Answered', answeredCount + ' of ' + QUESTIONS.length + (answeredCount < QUESTIONS.length ? ' (partial — re-import to resume)' : '')]);
   rows.push([]);
   rows.push(['Rank','Q#','Question','Area','Trait','Foundational','IML','Weight','Comments']);
 
   priorityList.forEach(function(p, rank) {
     rows.push([
-      rank+1,
+      p.answered ? (rank+1) : '',
       p.idx+1,
       p.q,
       p.area,
       p.trait,
       p.f ? 'Yes' : 'No',
-      p.iml,
+      p.answered ? p.iml : '',
       Number(p.w.toFixed(1)),
       p.comments
     ]);
@@ -3280,7 +3295,7 @@ function exportXLSX() {
 
   // Bold the title and header rows; freeze top header
   var titleCell = ws['A1']; if (titleCell) titleCell.s = {font:{bold:true,sz:14}};
-  var headerRow = 8;
+  var headerRow = 9;
   ['A','B','C','D','E','F','G','H','I'].forEach(function(col){
     var ref = col + headerRow;
     if (ws[ref]) ws[ref].s = {font:{bold:true}};
