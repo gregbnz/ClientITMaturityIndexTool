@@ -3584,8 +3584,6 @@ function escHtml(s) {
 // ═══ FEEDBACK WIDGET ═══
 // Endpoint that receives submitted requests and feedback as JSON.
 var FEEDBACK_WEBHOOK_URL = 'https://prod-02.australiaeast.logic.azure.com:443/workflows/28f1ea0854fa45c483603fdbbaade076/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=EcU1R0X-h1VIP2Td10Z_ngQ165TdsGIyRxf5JWtoo8o';
-// Address used by the mailto fallback when the webhook is unreachable.
-var FEEDBACK_EMAIL_TO    = 'Greg.Black@theinstillery.com';
 // Currently selected tab in the panel: 'request' or 'feedback'.
 var fbTab = 'request';
 
@@ -3744,7 +3742,7 @@ function fbSubmit() {
   var btn = document.getElementById('fb-submit');
   btn.disabled = true; btn.textContent = 'Sending...';
 
-  // Common completion handler used by both the webhook path and the fallback.
+  // Completion handler shared by the success and failure paths.
   var done = function(ok, msg) {
     btn.disabled = false; btn.textContent = 'Send';
     if (ok) {
@@ -3755,46 +3753,32 @@ function fbSubmit() {
         if (p && p.classList.contains('open')) fbToggle();
       }, 1800);
     } else {
-      fbStatus(msg || 'Could not send right now. Please try again.', 'err');
+      fbStatus(msg || 'Submission failed, please check your internet connection.', 'err');
     }
   };
 
-  if (FEEDBACK_WEBHOOK_URL) {
-    // POST the payload as JSON. Send with Content-Type text/plain so the
-    // browser issues a simple CORS request rather than a preflight.
-    console.log('[feedback] POSTing to', FEEDBACK_WEBHOOK_URL);
-    fetch(FEEDBACK_WEBHOOK_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
-      body: JSON.stringify(payload)
-    }).then(function(r){
-      console.log('[feedback] response status:', r.status, r.statusText);
-      if (r.ok || r.status === 202) {
-        done(true);
-      } else {
-        // Log the response body and switch to the mailto fallback.
-        r.text().then(function(t){ console.log('[feedback] response body:', t); });
-        fbMailtoFallback(payload, done);
-      }
-    }).catch(function(err){
-      // Network or CORS failure — switch to the mailto fallback.
-      console.log('[feedback] fetch error:', err && err.message ? err.message : err);
-      fbMailtoFallback(payload, done);
-    });
-  } else {
-    // No webhook configured — go straight to the mailto fallback.
-    console.log('[feedback] no webhook URL set, using mailto fallback');
-    fbMailtoFallback(payload, done);
-  }
-}
-
-// Build a mailto URL from the payload and open it in the user's mail client.
-function fbMailtoFallback(payload, done) {
-  var url = 'mailto:' + encodeURIComponent(FEEDBACK_EMAIL_TO) +
-            '?subject=' + encodeURIComponent(payload.subject) +
-            '&body='    + encodeURIComponent(payload.body);
-  window.location.href = url;
-  done(true, 'Opening your email client to send. Hit Send to deliver.');
+  // POST the payload as JSON to the Logic App. Sending Content-Type
+  // application/json lets Logic Apps parse the body and run schema
+  // validation. The browser will issue a CORS preflight; if Logic Apps
+  // is configured to allow this origin, the preflight succeeds and we
+  // can read the response status.
+  console.log('[feedback] POSTing to', FEEDBACK_WEBHOOK_URL);
+  fetch(FEEDBACK_WEBHOOK_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  }).then(function(r){
+    console.log('[feedback] response status:', r.status, r.statusText);
+    if (r.ok || r.status === 202) {
+      done(true);
+    } else {
+      r.text().then(function(t){ console.log('[feedback] response body:', t); });
+      done(false);
+    }
+  }).catch(function(err){
+    console.log('[feedback] fetch error:', err && err.message ? err.message : err);
+    done(false);
+  });
 }
 
 // Close the panel when the Escape key is pressed.
