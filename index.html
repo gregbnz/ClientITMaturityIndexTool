@@ -627,7 +627,7 @@ input[type="range"]::-moz-range-thumb { width:22px; height:22px; border-radius:5
 <!-- ═══ PERSISTENT TOP BAR ═══ -->
 <div id="topbar" style="display:none">
   <div class="topbar-inner">
-    <span class="topbar-logo" style="display:inline-flex;align-items:center;gap:8px"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent)"></span>IT Maturity Assessment <span style="color:var(--text3);font-weight:400;margin-left:6px">v0.3</span></span>
+    <span class="topbar-logo" style="display:inline-flex;align-items:center;gap:8px"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent)"></span>IT Maturity Assessment <span style="color:var(--text3);font-weight:400;margin-left:6px">v0.31</span></span>
     <span class="topbar-meta" id="topbar-meta"></span>
     <div class="prog-wrap">
       <div class="prog-bar"><div class="prog-fill" id="prog-fill"></div></div>
@@ -641,7 +641,7 @@ input[type="range"]::-moz-range-thumb { width:22px; height:22px; border-radius:5
   <!-- ═══ INTRO ═══ -->
   <div id="screen-intro" class="screen active">
     <div class="hero" style="text-align:center">
-      <h1>IT Maturity<br><span style="color:var(--accent)">Assessment</span> <span style="color:var(--text3);font-size:0.4em;font-weight:400;vertical-align:middle">v0.3</span></h1>
+      <h1>IT Maturity<br><span style="color:var(--accent)">Assessment</span> <span style="color:var(--text3);font-size:0.4em;font-weight:400;vertical-align:middle">v0.31</span></h1>
       <p class="tagline" style="font-size:16px;line-height:1.55;color:var(--text);margin:0 auto 10px;font-weight:500;max-width:680px">Most assessments give you a score. This one gives you a prioritised plan &mdash; benchmarked against your industry, with tailored next steps for every gap.</p>
     </div>
     <div class="stats-grid">
@@ -1004,7 +1004,11 @@ function closeInstructionsModal() {
 
 // Change log content for the landing-page modal.
 var CHANGELOG_HTML =
-  '<h2 style="margin-top:0">v0.3 &mdash; current</h2>' +
+  '<h2 style="margin-top:0">v0.31 &mdash; current</h2>' +
+  '<ul>' +
+    '<li>Questions and recommendations moved into a separate data file for performance and structuring.</li>' +
+  '</ul>' +
+  '<h2>v0.3</h2>' +
   '<ul>' +
     '<li>On-page tooltips explaining IML and the assessment structure.</li>' +
     '<li>In-app feedback widget for sending requests and feedback.</li>' +
@@ -1511,7 +1515,7 @@ function openRecsExportModal() {
   var listEl = document.getElementById('recs-modal-list');
   var html = '';
   _recsPriorityList.forEach(function(p, rank){
-    var checked = rank < 5 ? ' checked' : '';
+    var checked = rank < 10 ? ' checked' : '';
     html += '<label>' +
       '<input type="checkbox" data-rank="'+rank+'"'+checked+' onchange="updateRecsModalCount()">' +
       '<span class="ml-rank">#'+(rank+1)+'</span>' +
@@ -2007,7 +2011,7 @@ function setAssessmentDataLoading(isLoading, errorMessage) {
   <div class="modal-overlay" onclick="closeRecsExportModal()"></div>
   <div class="modal-card recs-modal-card" role="dialog" aria-labelledby="recs-export-title">
     <h3 id="recs-export-title">Export recommendations</h3>
-    <p class="modal-sub">Select the questions you want recommendations for. Listed in priority order — top 5 are pre-selected.</p>
+    <p class="modal-sub">Select the questions you want recommendations for. Listed in priority order — top 10 are pre-selected.</p>
     <div class="recs-modal-actions-top">
       <button type="button" onclick="recsModalSelect('top5')">Top 5</button>
       <button type="button" onclick="recsModalSelect('top10')">Top 10</button>
