@@ -18,7 +18,8 @@
     "Technology and business strategies are indistinguishable, proactively driving new revenue streams and competitive differentiation."
    ],
    "w": 3.1,
-   "f": 1
+   "f": 1,
+   "fr": "Without IT being deliberately tied to business outcomes, every other technology investment is misdirected. Strategic alignment is the prerequisite that gives every downstream activity its purpose and a defensible ROI lens."
   },
   {
    "area": "Strategy, Governance and Investment",
@@ -83,8 +84,7 @@
     "IT is a proactive strategic partner co-designing business outcomes and driving executive-level decisions.",
     "Technology leadership is indistinguishable from business leadership; defining the future of the company."
    ],
-   "w": 3.2,
-   "f": 1
+   "w": 3.2
   },
   {
    "area": "Strategy, Governance and Investment",
@@ -110,8 +110,7 @@
     "A multi-stakeholder board prioritizes investments using detailed business cases and projected ROI metrics.",
     "Resource allocation is dynamic and data-driven; automatically shifting to the highest-value opportunities in real-time."
    ],
-   "w": 2.9,
-   "f": 1
+   "w": 2.9
   },
   {
    "area": "Strategy, Governance and Investment",
@@ -176,8 +175,7 @@
     "Formal value-realization metrics track the direct impact of technology spend on operational efficiency.",
     "High confidence exists as automated dashboards link IT consumption directly to business growth."
    ],
-   "w": 3.2,
-   "f": 1
+   "w": 3.2
   },
   {
    "area": "Strategy, Governance and Investment",
@@ -190,8 +188,7 @@
     "A structured steering committee prioritizes investments using detailed business cases and ROI projections.",
     "Continuous portfolio management prioritizes high-impact innovation based on real-time market needs."
    ],
-   "w": 3.2,
-   "f": 1
+   "w": 3.2
   },
   {
    "area": "Strategy, Governance and Investment",
@@ -283,7 +280,8 @@
     "Full-stack observability and AIOps predicts and remediates performance degradation before user impact occurs."
    ],
    "w": 4.1,
-   "f": 1
+   "f": 1,
+   "fr": "You cannot operate, secure or improve what you cannot see. Observability is the prerequisite control that incident response, performance management and cost optimisation all depend on."
   },
   {
    "area": "Operations, Platform and Service Delivery",
@@ -348,8 +346,7 @@
     "Application lifecycles are managed through automated deployment and self-service software centers.",
     "Users are empowered with automated help and AI assistants that resolve app issues instantly."
    ],
-   "w": 3.8,
-   "f": 1
+   "w": 3.8
   },
   {
    "area": "Operations, Platform and Service Delivery",
@@ -362,8 +359,7 @@
     "Secure remote support is integrated into the workspace with automated health checks and identity verification.",
     "A global zero-trust support model provides seamless secure assistance and device recovery anywhere in the world."
    ],
-   "w": 3.5,
-   "f": 1
+   "w": 3.5
   },
   {
    "area": "Operations, Platform and Service Delivery",
@@ -376,8 +372,7 @@
     "Data-driven support queues prioritize issues based on business impact with high first-call resolution.",
     "AI-driven support triage and resolution provide near-instant consistent responses for all common requirements."
    ],
-   "w": 3.9,
-   "f": 1
+   "w": 3.9
   },
   {
    "area": "Operations, Platform and Service Delivery",
@@ -391,7 +386,8 @@
     "Applications are managed as modern digital products with continuous integration and zero-downtime deployments."
    ],
    "w": 3.9,
-   "f": 1
+   "f": 1,
+   "fr": "When business-critical applications fail, the business stops. Reliable support for these systems is the core promise IT makes to the business — without it, no other digital capability matters."
   },
   {
    "area": "Operations, Platform and Service Delivery",
@@ -418,7 +414,8 @@
     "Resilience is built into the business model with seamless transitions to alternative operating modes."
    ],
    "w": 4.2,
-   "f": 1
+   "f": 1,
+   "fr": "Outages are inevitable — from cyber events, suppliers, sites or people. A documented BC plan is what converts an existential event into a managed one; without it, a single disruption can threaten the company."
   },
   {
    "area": "Security & Business Resilience",
@@ -445,7 +442,8 @@
     "Continuous multi-region data protection ensures backups are always available and instantly recoverable."
    ],
    "w": 4.2,
-   "f": 1
+   "f": 1,
+   "fr": "Tested, immutable backups are the last line of defence against ransomware, corruption and accidental deletion. Without them, every other resilience and security control is one bad day away from catastrophic data loss."
   },
   {
    "area": "Security & Business Resilience",
@@ -485,7 +483,8 @@
     "Full Zero-Trust architecture continuously verifies every access request based on full device context."
    ],
    "w": 4.2,
-   "f": 1
+   "f": 1,
+   "fr": "Identity is the modern perimeter. Strong IAM — MFA, least privilege, joiner/mover/leaver — is the foundation that virtually every other security control assumes is already in place."
   },
   {
    "area": "Security & Business Resilience",
@@ -498,7 +497,9 @@
     "Vulnerability scanning and automated patching are integrated into a risk-based remediation workflow.",
     "Real-time vulnerability orchestration automatically remediates threats across all endpoints and cloud resources."
    ],
-   "w": 4.2
+   "w": 4.2,
+   "f": 1,
+   "fr": "The majority of breaches exploit known, already-patchable vulnerabilities. Disciplined patch and vulnerability management is basic cyber hygiene; without it, investment in more advanced controls is largely wasted."
   },
   {
    "area": "Security & Business Resilience",
@@ -511,8 +512,7 @@
     "XDR and automated threat hunting provide proactive detection and response across the environment.",
     "AI-driven security operations provide autonomous threat detection and posture management in real-time."
    ],
-   "w": 4.1,
-   "f": 1
+   "w": 4.1
   },
   {
    "area": "Security & Business Resilience",
@@ -526,7 +526,8 @@
     "Incident response is integrated into a continuous improvement cycle using AI to predict and block attacks."
    ],
    "w": 4,
-   "f": 1
+   "f": 1,
+   "fr": "A security or major operational incident is a question of when, not if. A documented and rehearsed IR plan is what separates a contained event from a public crisis — and is increasingly required by insurers and regulators."
   },
   {
    "area": "Security & Business Resilience",
@@ -539,8 +540,7 @@
     "Security is a shared responsibility with department champions and clear reporting of suspicious activity.",
     "A proactive security-first culture is embedded in all business processes driven by executive leadership."
    ],
-   "w": 3.5,
-   "f": 1
+   "w": 3.5
   },
   {
    "area": "Digital Enablement and Future Capability",
