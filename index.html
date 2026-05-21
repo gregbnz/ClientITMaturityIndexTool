@@ -646,7 +646,7 @@ input[type="range"]::-moz-range-thumb { width:22px; height:22px; border-radius:5
 <!-- ═══ PERSISTENT TOP BAR ═══ -->
 <div id="topbar" style="display:none">
   <div class="topbar-inner">
-    <span class="topbar-logo" style="display:inline-flex;align-items:center;gap:8px"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent)"></span>IT Maturity Assessment <span style="color:var(--text3);font-weight:400;margin-left:6px">v0.32</span></span>
+    <span class="topbar-logo" style="display:inline-flex;align-items:center;gap:8px"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent)"></span>IT Maturity Assessment <span class="app-version-label" style="color:var(--text3);font-weight:400;margin-left:6px"></span></span>
     <span class="topbar-meta" id="topbar-meta"></span>
     <div class="prog-wrap">
       <div class="prog-bar"><div class="prog-fill" id="prog-fill"></div></div>
@@ -660,7 +660,7 @@ input[type="range"]::-moz-range-thumb { width:22px; height:22px; border-radius:5
   <!-- ═══ INTRO ═══ -->
   <div id="screen-intro" class="screen active">
     <div class="hero" style="text-align:center">
-      <h1>IT Maturity<br><span style="color:var(--accent)">Assessment</span> <span style="color:var(--text3);font-size:0.4em;font-weight:400;vertical-align:middle">v0.32</span></h1>
+      <h1>IT Maturity<br><span style="color:var(--accent)">Assessment</span> <span class="app-version-label" style="color:var(--text3);font-size:0.4em;font-weight:400;vertical-align:middle"></span></h1>
       <p class="tagline" style="font-size:16px;line-height:1.55;color:var(--text);margin:0 auto 10px;font-weight:500;max-width:680px">Most assessments give you a score. This one gives you a prioritised plan &mdash; benchmarked against your industry, with tailored next steps for every gap.</p>
     </div>
     <div class="stats-grid">
@@ -812,6 +812,11 @@ input[type="range"]::-moz-range-thumb { width:22px; height:22px; border-radius:5
 </div>
 
 <script>
+// Bump this on every release. Used as a cache-busting query string on data.json so
+// returning users get the new content without having to hard-reload. Keep in sync
+// with the version shown in the topbar, the landing-page heading and the changelog.
+var APP_VERSION = '0.33';
+
 var IML_LABELS = ['Nascent','Learning','Proficient','Skilled','Innovating'];
 // AREA_SUMMARIES, QUESTIONS, RECS are loaded from data.json — see bootstrap at the end of this script.
 var AREA_SUMMARIES = {};
@@ -1033,7 +1038,11 @@ function closeInstructionsModal() {
 
 // Change log content for the landing-page modal.
 var CHANGELOG_HTML =
-  '<h2 style="margin-top:0">v0.32 &mdash; current</h2>' +
+  '<h2 style="margin-top:0">v' + APP_VERSION + ' &mdash; current</h2>' +
+  '<ul>' +
+    '<li>Adjusted cache control for new versions.</li>' +
+  '</ul>' +
+  '<h2>v0.32</h2>' +
   '<ul>' +
     '<li>Foundational tag now affects recommendation priority.</li>' +
   '</ul>' +
@@ -2006,10 +2015,24 @@ function setAssessmentDataLoading(isLoading, errorMessage) {
   }
 }
 
+// Render APP_VERSION into every element that displays the app version (topbar,
+// landing-page heading, etc.). Single source of truth — bump APP_VERSION only.
+function renderAppVersion() {
+  var labels = document.getElementsByClassName('app-version-label');
+  for (var i = 0; i < labels.length; i++) {
+    labels[i].textContent = 'v' + APP_VERSION;
+  }
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', renderAppVersion);
+} else {
+  renderAppVersion();
+}
+
 (function bootstrapAssessmentData() {
   function start() {
     setAssessmentDataLoading(true);
-    fetch('data.json', { cache: 'force-cache' })
+    fetch('data.json?v=' + APP_VERSION, { cache: 'force-cache' })
       .then(function(r){ if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
       .then(function(data){
         applyAssessmentData(data);
